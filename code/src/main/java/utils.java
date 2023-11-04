@@ -44,7 +44,6 @@ public class utils {
         // Ora hai i dati nelle liste fasceOrari, frequenze e proporzioni
         for (int i = 0; i < fasceOrari.size(); i++) {
             System.out.println("Fascia oraria: " + fasceOrari.get(i) + ", Frequenza: " + frequenze.get(i) + ", Proporzione: " + proporzioni.get(i));
-
         }
         System.out.println("Somma delle frequenze: " + sommaFrequenze);
     }
