@@ -15,25 +15,11 @@ package model;/* ---------------------------------------------------------------
  */
 
 import mathLib.Rngs;
-
-import java.io.*;
 import java.lang.*;
 import java.text.*;
 
 
-class Ssq3Area {                
-  double node;                    /* time integrated number in the node  */
-  double queue;                   /* time integrated number in the queue */
-  double service;                 /* time integrated number in service   */
-
-  void initAreaParas() {
-    node = 0.0;
-    queue = 0.0;
-    service = 0.0;
-  }
-}
-
-class Ssq3T {
+class Ssq3T { //clock
   double arrival;                 /* next arrival time                   */
   double completion;              /* next completion time                */
   double current;                 /* current time                        */
@@ -42,12 +28,13 @@ class Ssq3T {
 }
 
 
-class Ssq3 {
+public class Ssq3 {
 
   static double START = 0.0;              /* initial time                   */
-  static double STOP  = 20000.0;          /* terminal (close the door) time */
+  static double STOP  = 2000000.0;          /* terminal (close the door) time */
   static double INFINITY = 100.0 * STOP;  /* must be much larger than STOP  */
-  
+  static long   TOTAL_ARRIVALS = 15000;        /* number of arrivals             */
+
   static double sarrival = START;
 
   public static void main(String[] args) {
@@ -80,11 +67,11 @@ class Ssq3 {
       if (t.current == t.arrival)  {               /* process an arrival */
         number++;
         t.arrival     = s.getArrival(r);
-        if (t.arrival > STOP)  {
+        if (t.arrival > STOP)  { //if arrival time is after STOP time, set arrival time to infinity
           t.last      = t.current;
           t.arrival   = INFINITY;
         }
-        if (number == 1)
+        if (number == 1) //if there is only one job in the node, schedule a completion
           t.completion = t.current + s.getService(r);
       }
       else {                                        /* process a completion */
@@ -132,14 +119,14 @@ class Ssq3 {
  * ---------------------------------------------
  */
     r. selectStream(0);
-    sarrival += exponential(2.0, r);
+    sarrival += exponential(5.0, r);
     return (sarrival);
   }
 
 
   double getService(Rngs r) {
 /* --------------------------------------------
- * generate the next service time with rate 2/3
+ * generate the next service time with rate
  * --------------------------------------------
  */
     r. selectStream(1);

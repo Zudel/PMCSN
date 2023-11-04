@@ -1,16 +1,0 @@
-
-E
-java:S3740"/Provide the parametrized type for this generic.(Ü»Õá
-D
-java:S3740"/Provide the parametrized type for this generic.(Ñò—E
-E
-java:S3740"/Provide the parametrized type for this generic.(ü¥ Õ
-g	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(·’Ê¶þÿÿÿÿ
-Y
-java:S3518*"DMake sure "sommaFrequenze" can't be zero before doing this division.(ŠÌË/
-U
-java:S1118":Add a private constructor to hide the implicit public one.(·’Ê¶þÿÿÿÿ
-b	java:S100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(œ­—m
-V	java:S125"<This block of commented-out lines of code should be removed.(œ„Òßûÿÿÿÿ
-S	java:S106."9Replace this use of System.out or System.err by a logger.(ÉªÍÇøÿÿÿÿ
-N	java:S1060"9Replace this use of System.out or System.err by a logger.(€½ðÖ

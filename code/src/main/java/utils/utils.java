@@ -1,3 +1,5 @@
+package utils;
+
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
@@ -10,11 +12,13 @@ import java.util.List;
  * le proporzioni, stampando a video i risultati.
  * */
 public class utils {
+    static List<String> fasceOrari = new ArrayList();
+    static List<Integer> frequenze = new ArrayList();
+    static List<Double> proporzioni = new ArrayList();
 
-    public static void LeggiCSV(String filePath) {
-        List<String> fasceOrari = new ArrayList();
-        List<Double> frequenze = new ArrayList();
-        List<Double> proporzioni = new ArrayList();
+    public static List<fasciaOraria> LeggiCSV(String filePath) {
+
+        double sommaProporzioni = 0;
 
         try {
             FileReader fileReader = new FileReader(filePath);
@@ -24,7 +28,7 @@ public class utils {
             //csvReader.readNext(); // Ignora l'intestazione
             while ((line = csvReader.readNext()) != null) {
                     fasceOrari.add(line[0]); // Aggiungi la fascia oraria alla lista
-                    frequenze.add(Double.valueOf(line[1])); // Aggiungi la frequenza alla lista
+                    frequenze.add(Integer.valueOf(line[1])); // Aggiungi la frequenza alla lista
                     //proporzioni.add(Double.valueOf(line[2]));
             }
 
@@ -39,13 +43,30 @@ public class utils {
         }
         //calcola le proporzioni
         for (int i = 0; i < frequenze.size(); i++) {
-            proporzioni.add(frequenze.get(i) / sommaFrequenze);
+            proporzioni.add(Double.valueOf(frequenze.get(i)) / sommaFrequenze);
+            sommaProporzioni += proporzioni.get(i);
         }
-        // Ora hai i dati nelle liste fasceOrari, frequenze e proporzioni
+
+
+        //crea una lista di ritorno che crea oggetti fasciaOraria con i valori letti dal csv
+        List<fasciaOraria> lista = new ArrayList<>();
         for (int i = 0; i < fasceOrari.size(); i++) {
-            System.out.println("Fascia oraria: " + fasceOrari.get(i) + ", Frequenza: " + frequenze.get(i) + ", Proporzione: " + proporzioni.get(i));
+            lista.add(new fasciaOraria(fasceOrari.get(i), frequenze.get(i), proporzioni.get(i)));
         }
-        System.out.println("Somma delle frequenze: " + sommaFrequenze);
-    }
+
+
+        //stampa a video i risultati
+
+
+        /*for (int i = 0; i < fasceOrari.size(); i++) {
+            System.out.println("Fascia oraria: " + fasceOrari.get(i) + ", Frequenza: " + frequenze.get(i) + ", Proporzione: " + proporzioni.get(i));
+
+        System.out.println("Somma delle frequenze: " + sommaFrequenze
+            + ", Somma delle proporzioni: " + sommaProporzioni);
+    }*/
+
+
+    return lista;
+}
 
 }
