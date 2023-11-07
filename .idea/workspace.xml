@@ -5,25 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="73dcb141-e879-4a17-87af-80d7f7942b65" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/2/e/2ed2547ed17ba7fcff9876ebeacbce9e4a3fd7b2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/3/a/3ab132c05941711fe825fcef565086d14b1bddcf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/4/4/442292b8a7efeabbe4cc176709b833b1792140ec" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/a/8/a8b0af0acf22bea5cddaa6d4d8be3c15b3466ded" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/d/3/d3c26bf08301c98991887bafaf09d331e2067b4c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/f/3/f32b2370e60ba5de4ab3a60f27fc23abbe4d0c0f" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/2/e/2ed2547ed17ba7fcff9876ebeacbce9e4a3fd7b2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/3/a/3ab132c05941711fe825fcef565086d14b1bddcf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/4/4/442292b8a7efeabbe4cc176709b833b1792140ec" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/a/8/a8b0af0acf22bea5cddaa6d4d8be3c15b3466ded" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/d/3/d3c26bf08301c98991887bafaf09d331e2067b4c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/f/3/f32b2370e60ba5de4ab3a60f27fc23abbe4d0c0f" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/java/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/java/model/Msq.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/model/Msq.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/java/model/Ssq3.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/model/Ssq3.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/java/utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/utils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/Simulator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/model/Msq.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,6 +70,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Simulator" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Simulator" />
+      <module name="code" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Ssq3" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="model.Ssq3" />
       <module name="code" />
@@ -98,17 +90,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="main" />
-      <module name="code" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Ssq3" />
-        <item itemvalue="Application.main" />
+        <item itemvalue="Application.Simulator" />
         <item itemvalue="Application.Rngs" />
       </list>
     </recent_temporary>
@@ -128,7 +113,10 @@
       <workItem from="1698999895653" duration="2555000" />
       <workItem from="1699091827738" duration="4182000" />
       <workItem from="1699106688975" duration="5987000" />
-      <workItem from="1699117155581" duration="4559000" />
+      <workItem from="1699117155581" duration="4604000" />
+      <workItem from="1699277327315" duration="16000" />
+      <workItem from="1699287658530" duration="230000" />
+      <workItem from="1699363208120" duration="9075000" />
     </task>
     <servers />
   </component>

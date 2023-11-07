@@ -1,0 +1,61 @@
+
+r	java:S117U"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(úåÿôıÿÿÿÿ8Ü†äÓº1
+m	java:S117h"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(òû¿8Ü†äÓº1
+Z
+java:S2589J"8Remove this expression which always evaluates to "false"(ëÿİùÿÿÿÿ8ŠìˆÔº1
+q
+java:S18543"ORemove this useless assignment to local variable "abandonmentShippingNotPrime".(ı‘ÏÚùÿÿÿÿ8‹‡äÓº1
+n
+java:S18542"LRemove this useless assignment to local variable "abandonmentShippingPrime".(áÿå•øÿÿÿÿ8‹‡äÓº1
+h
+java:S18541"FRemove this useless assignment to local variable "abandonmentQuality".(€÷¤øÿÿÿÿÿ8‹‡äÓº1
+c
+java:S18540"FRemove this useless assignment to local variable "abandonmentPacking".(ëôà·8‹‡äÓº1
+h
+java:S1854/"FRemove this useless assignment to local variable "abandonmentPicking".(¿½Èûÿÿÿÿ8‹‡äÓº1
+h
+java:S1854#"FRemove this useless assignment to local variable "areaShippingCenter".(üºÔËıÿÿÿÿ8‹‡äÓº1
+b
+java:S1854""ERemove this useless assignment to local variable "areaQualityCenter".(µÕ¾É8‹‡äÓº1
+g
+java:S1854!"ERemove this useless assignment to local variable "areaPackingCenter".(¶ßŠ¸ıÿÿÿÿ8‹‡äÓº1
+b
+java:S1854 "ERemove this useless assignment to local variable "areaPickingCenter".(’‡å—8‹‡äÓº1
+[
+java:S1854">Remove this useless assignment to local variable "areaServer".(ç­Ê¡8‹‡äÓº1
+L
+java:S1481"/Remove this unused "areaServer" local variable.(ç­Ê¡8Œ‡äÓº1
+S
+java:S1481 "6Remove this unused "areaPickingCenter" local variable.(’‡å—8Œ‡äÓº1
+X
+java:S1481!"6Remove this unused "areaPackingCenter" local variable.(¶ßŠ¸ıÿÿÿÿ8Œ‡äÓº1
+S
+java:S1481""6Remove this unused "areaQualityCenter" local variable.(µÕ¾É8Œ‡äÓº1
+Y
+java:S1481#"7Remove this unused "areaShippingCenter" local variable.(üºÔËıÿÿÿÿ8Œ‡äÓº1
+R
+java:S1481$"0Remove this unused "indexServer" local variable.(ãÕ¶Úùÿÿÿÿ8Œ‡äÓº1
+T
+java:S1481%"7Remove this unused "indexPickingCenter" local variable.(ùøìğ8¸ÇäÓº1
+T
+java:S1481&"7Remove this unused "indexPackingCenter" local variable.(Êáÿß8¸ÇäÓº1
+Y
+java:S1481'"7Remove this unused "indexQualityCenter" local variable.(’Î˜øüÿÿÿÿ8¸ÇäÓº1
+Z
+java:S1481("8Remove this unused "indexShippingCenter" local variable.(Û˜ŞÓşÿÿÿÿ8¸ÇäÓº1
+Y
+java:S1481/"7Remove this unused "abandonmentPicking" local variable.(¿½Èûÿÿÿÿ8‡äÓº1
+T
+java:S14810"7Remove this unused "abandonmentPacking" local variable.(ëôà·8‡äÓº1
+Y
+java:S14811"7Remove this unused "abandonmentQuality" local variable.(€÷¤øÿÿÿÿÿ8‡äÓº1
+_
+java:S14812"=Remove this unused "abandonmentShippingPrime" local variable.(áÿå•øÿÿÿÿ8‡äÓº1
+b
+java:S14813"@Remove this unused "abandonmentShippingNotPrime" local variable.(ı‘ÏÚùÿÿÿÿ8‡äÓº1
+Z	java:S106C"9Replace this use of System.out or System.err by a logger.(åšÄ¼ıÿÿÿÿ8‡äÓº1
+J	java:S108J")Either remove or fill this block of code.(ëÿİùÿÿÿÿ8‡äÓº1
+V
+java:S3400R"9Remove this method and declare a constant for this value.(”·³›8”ìˆÔº1
+W
+java:S1172P":Remove these unused method parameters "r", "current", "i".(„ëİò8ûÙ÷Óº1
