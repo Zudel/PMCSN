@@ -1,25 +1,30 @@
 import mathLib.Rngs;
+import mathLib.Rvms;
 import utils.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static model.SimulatorParameters.*;
+import static model.Ssq3.INFINITY;
 
-class MsqEvent {                     /* the next-event list    */
+class Event {                     /* the next-event list    */
     double t;                         /*   next event time      */
     int x;                         /*   event status, 0 or 1 */
 }
-class MsqSum {                      /* accumulated sums of                */
+class Sum {                      /* accumulated sums of                */
     double service;                   /*   service times                    */
     long served;                    /*   number served                    */
 }
-class MsqT {
+class T {
     double current;                   /* current time                       */
     double next;                      /* next (most imminent) event time    */
+    double completionServer;              /* next completion time server               */
 }
 
 public class Simulator {
+
+    double sarrival = START;
     static List<fasciaOraria> listaFasciaOraria = utils.LeggiCSV("C:\\Users\\Roberto\\Documents\\GitHub\\PMCSN\\code\\src\\main\\resources\\distribuzioneOrdiniGiornalieri.csv");
     public static void main(String[] args) { //start point of the program execution
 
@@ -28,11 +33,13 @@ public class Simulator {
         int numberJobsPackingCenter = 0;
         int numberJobsQualityCenter = 0;
         int numberJobsShippingCenter = 0;
+        int    e;                      /* next event index                   */
         double areaServer   = 0.0;           /* time integrated number in the node */
         double areaPickingCenter   = 0.0;           /* time integrated number in the node */
         double areaPackingCenter   = 0.0;           /* time integrated number in the node */
         double areaQualityCenter   = 0.0;           /* time integrated number in the node */
         double areaShippingCenter   = 0.0;           /* time integrated number in the node */
+        double serviceServer;
         long indexServer   = 0;             /* used to count departed jobs         */
         long indexPickingCenter   = 0;             /* used to count departed jobs         */
         long indexPackingCenter   = 0;             /* used to count departed jobs         */
@@ -41,20 +48,20 @@ public class Simulator {
 
         Simulator sim = new Simulator();
         Rngs r = new Rngs();
-        MsqT t = new MsqT();
-        MsqEvent[] event = new MsqEvent[ALL_EVENTS_SERVER + ALL_EVENTS_PICKING + ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING];
-        MsqSum[] sum = new MsqSum[ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING + ALL_EVENTS_PICKING + ALL_EVENTS_SERVER];
+        T t = new T();
+        Event[] event = new Event[ALL_EVENTS_SERVER + ALL_EVENTS_PICKING + ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING];
+        Sum[] sum = new Sum[ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING + ALL_EVENTS_PICKING + ALL_EVENTS_SERVER];
         List<Double> abandonmentPicking = new ArrayList<>();
         List<Double> abandonmentPacking = new ArrayList<>();
         List<Double> abandonmentQuality = new ArrayList<>();
         List<Double> abandonmentShippingPrime = new ArrayList<>();
         List<Double> abandonmentShippingNotPrime = new ArrayList<>();
-
+        List<Double> serverResponseTimes = new ArrayList<>();
         r.putSeed(123456789);
         t.current    = START;
+        t.completionServer = INFINITY;
         event[0].t   = sim.getArrival(r, t.current, 1); //first arrival to the server node
         event[0].x   = 1;
-
 
         for (int i = 1; i < ALL_EVENTS_SERVER + ALL_EVENTS_PICKING + ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING; i++) { //messo il + 2 perchè ho aggiunto il dispatcher e +14 per i due centri dei guasti?
             event[i].t     = START;          /* this value is arbitrary because */
@@ -63,26 +70,106 @@ public class Simulator {
             sum[i].served  = 0;
         }
 
-        for (int i = 0; i < listaFasciaOraria.size(); i++) {
+        for (int i = 0; i < listaFasciaOraria.size(); i++) { //stampa la lista delle fasce orarie
             System.out.println(listaFasciaOraria.get(i).getFasciaOraria() + " " + listaFasciaOraria.get(i).getFrequenza() + " " + listaFasciaOraria.get(i).getProporzione()+"%");
         }
         for (int i = 0; i < ALL_EVENTS_SERVER + ALL_EVENTS_PICKING + ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING; i++) {
-            event[i] = new MsqEvent();
-            sum[i] = new MsqSum();
+            event[i] = new Event();
+            sum[i] = new Sum();
         }
 
         while (t.current < STOP || (numberJobsServerOrder + numberJobsPickingCenter + numberJobsPackingCenter + numberJobsQualityCenter + numberJobsShippingCenter > 0)){
+            e         = sim.nextEvent(event, 1);
+            t.next    = event[e].t;
+            areaServer     += (t.next - t.current) * numberJobsServerOrder;
+            t.current = t.next;
+
+            if (e == 0) { //e == 0
+                numberJobsServerOrder++;
+                event[0].t        = sim.getArrival(r, t.current, 1); //aggiustare il 1
+                if (event[0].t > STOP)
+                    event[0].x      = 0;
+                if (numberJobsServerOrder <= 1) {
+                    serviceServer         = sim.getService(r); //aggiustare il 1
+
+                    sum[1].service += serviceServer;
+                    sum[1].served++;
+                    event[1].t      = t.current + serviceServer;
+                    event[1].x      = 1;
+                }
+            }
+            else { //e == 1
+                indexServer++;
+                numberJobsServerOrder--;
+                if (numberJobsServerOrder >= 1) {
+                    serviceServer         = sim.getService(r); //aggiustare il 1
+                    sum[1].service += serviceServer;
+                    sum[1].served++;
+                    event[1].t      = t.current + serviceServer;
+                }
+                else
+                    event[1].x      = 0;
+            }
+
+            /**
+             e         = m.nextEvent(event);
+            t.next    = event[e].t;
+            area     += (t.next - t.current) * number;
+            t.current = t.next;
+
+            if (e == 0) {
+                number++;
+                event[0].t        = m.getArrival(r);
+                if (event[0].t > STOP)
+                    event[0].x      = 0;
+                if (number <= SERVERS) {
+                    service         = m.getService(r);
+                    s               = m.findOne(event);
+                    sum[s].service += service;
+                    sum[s].served++;
+                    event[s].t      = t.current + service;
+                    event[s].x      = 1;
+                }
+            }
+            else {
+                index++;
+                number--;
+                s                 = e;
+                if (number >= SERVERS) {
+                    service         = m.getService(r);
+                    sum[s].service += service;
+                    sum[s].served++;
+                    event[s].t      = t.current + service;
+                }
+                else
+                    event[s].x      = 0;
+            }
+            */
+
 
         }
 
     } //end main
 
-    private double getArrival(Rngs r, double current, int i) {
+    private double getService(Rngs r) {
 
-        return 0;
+        return 0.0;
     }
 
-    int nextEvent(MsqEvent[] event, int SERVERS) {
+    private double getArrival(Rngs r, double currentTime, int streamIndex) {
+        /* --------------------------------------------------------------
+         * generate the next arrival time with idfPoisson
+         * --------------------------------------------------------------
+         */
+        r.selectStream(0 + streamIndex);
+
+        Rvms rvms = new Rvms();
+        //index per tutte le fasce, altrimenti sostituisci l'indice della singola fascia
+        //sarrival += rvms.idfPoisson(fasce.get(index).getMediaPoisson(), r.random());
+        return (sarrival);
+    }
+
+    int nextEvent(Event[] event, int SERVERS) {
         /* ---------------------------------------
          * return the index of the next event type
          * ---------------------------------------
@@ -101,7 +188,7 @@ public class Simulator {
         return (e);
     }
 
-    int findOne(MsqEvent [] event, int SERVERS) {
+    int findOne(Event [] event, int SERVERS) {
         /* -----------------------------------------------------
          * return the index of the available server idle longest
          * -----------------------------------------------------

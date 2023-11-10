@@ -32,7 +32,7 @@ public class Ssq3 {
 
   static double START = 0.0;              /* initial time                   */
   static double STOP  = 2000000.0;          /* terminal (close the door) time */
-  static double INFINITY = 100.0 * STOP;  /* must be much larger than STOP  */
+  public static double INFINITY = 100.0 * STOP;  /* must be much larger than STOP  */
   static long   TOTAL_ARRIVALS = 15000;        /* number of arrivals             */
 
   static double sarrival = START;

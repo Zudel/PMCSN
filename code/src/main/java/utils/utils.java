@@ -51,7 +51,8 @@ public class utils {
         //crea una lista di ritorno che crea oggetti fasciaOraria con i valori letti dal csv
         List<fasciaOraria> lista = new ArrayList<>();
         for (int i = 0; i < fasceOrari.size(); i++) {
-            lista.add(new fasciaOraria(fasceOrari.get(i), frequenze.get(i), proporzioni.get(i)));
+
+            lista.add(new fasciaOraria(fasceOrari.get(i), frequenze.get(i), proporzioni.get(i),  i, 0  ,0+ 3600*i, 3600+3600*i));//3600 secondi in un ora
         }
 
 
