@@ -5,27 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="73dcb141-e879-4a17-87af-80d7f7942b65" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/0/5/05f590900169c5bccbc9a82b5feb85e5900b39da" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/0/5/05f590900169c5bccbc9a82b5feb85e5900b39da" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/2/e/2ed2547ed17ba7fcff9876ebeacbce9e4a3fd7b2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/6/2/62f53fedcc6cce356fd222ef22fef55d45e852af" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/6/2/62f53fedcc6cce356fd222ef22fef55d45e852af" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/6/7/673c80039b74a9a1b2574e2162403bc9496f44a2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/6/9/69753244129a57fef189d5a01cf9b252ef36897a" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/7/0/7019a8f1eae672d2958ce212c0acaff185ccc91e" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/7/0/7019a8f1eae672d2958ce212c0acaff185ccc91e" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/8/f/8f09697c4e882b12c35847e150ae9ffb5f16fc96" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/f/3/f32b2370e60ba5de4ab3a60f27fc23abbe4d0c0f" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/f/8/f869c6ff4baa171d97842172e66de79f35ec201d" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/f/8/f869c6ff4baa171d97842172e66de79f35ec201d" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/2/e/2ed2547ed17ba7fcff9876ebeacbce9e4a3fd7b2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/6/7/673c80039b74a9a1b2574e2162403bc9496f44a2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/6/9/69753244129a57fef189d5a01cf9b252ef36897a" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/8/f/8f09697c4e882b12c35847e150ae9ffb5f16fc96" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/f/3/f32b2370e60ba5de4ab3a60f27fc23abbe4d0c0f" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/Msq.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/Msq.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/Simulator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/java/mathLib/Rvms.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/mathLib/Rvms.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/java/model/Ssq3.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/model/Ssq3.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/fasciaOraria.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/fasciaOraria.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/fasciaOraria.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/FasciaOraria.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/utils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -74,7 +58,12 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Application.Ssq3">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Roberto\Documents\GitHub\PMCSN\code\src\main" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.Simulator">
     <configuration name="Rngs" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="mathLib.Rngs" />
       <module name="code" />
@@ -110,8 +99,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Ssq3" />
         <item itemvalue="Application.Simulator" />
+        <item itemvalue="Application.Ssq3" />
         <item itemvalue="Application.Rngs" />
       </list>
     </recent_temporary>
@@ -136,7 +125,8 @@
       <workItem from="1699287658530" duration="230000" />
       <workItem from="1699363208120" duration="9075000" />
       <workItem from="1699541698833" duration="5906000" />
-      <workItem from="1699613398032" duration="3974000" />
+      <workItem from="1699613398032" duration="3990000" />
+      <workItem from="1699622639107" duration="3299000" />
     </task>
     <servers />
   </component>

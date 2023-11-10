@@ -16,7 +16,7 @@ public class utils {
     static List<Integer> frequenze = new ArrayList();
     static List<Double> proporzioni = new ArrayList();
 
-    public static List<fasciaOraria> LeggiCSV(String filePath) {
+    public static List<FasciaOraria> LeggiCSV(String filePath) {
 
         double sommaProporzioni = 0;
 
@@ -49,10 +49,10 @@ public class utils {
 
 
         //crea una lista di ritorno che crea oggetti fasciaOraria con i valori letti dal csv
-        List<fasciaOraria> lista = new ArrayList<>();
+        List<FasciaOraria> lista = new ArrayList<>();
         for (int i = 0; i < fasceOrari.size(); i++) {
 
-            lista.add(new fasciaOraria(fasceOrari.get(i), frequenze.get(i), proporzioni.get(i),  i, 0  ,0+ 3600*i, 3600+3600*i));//3600 secondi in un ora
+            lista.add(new FasciaOraria(fasceOrari.get(i), frequenze.get(i), proporzioni.get(i),  i, 0  ,0+ 3600*i, 3600+3600*i));//3600 secondi in un ora
         }
 
 
@@ -69,5 +69,16 @@ public class utils {
 
     return lista;
 }
+    public static int fasciaOrariaSwitch(List<FasciaOraria> fol, double currentTime){
+        int ret = 0;
+
+        for(FasciaOraria f : fol){
+            if(currentTime >= f.getLowerBound() && currentTime <= f.getUpperBound()){
+                ret = fol.indexOf(f);
+            }
+        }
+
+        return ret; //ritorno l'indice dell'array della fascia oraria in cui mi trovo
+    }
 
 }

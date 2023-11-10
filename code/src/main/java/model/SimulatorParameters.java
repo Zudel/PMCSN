@@ -4,6 +4,7 @@ public class SimulatorParameters {
 
     public static final double START   = 0.0;            /* initial (open the door)        */
     public static final double STOP    = 55800;        /* terminal (close the door) time */ //dalle 7 alle 24 in sec 61200.0; 55800 tolte 3 fasce //80000 orizzionte infinito
+    public static final double    INFINITY =  100.0 * STOP;              /* number of servers              */
     public static final double STOP_BATCH    = 10958; /* close the door batch*/
 
 
@@ -33,6 +34,9 @@ public class SimulatorParameters {
     public static final int ALL_EVENTS_PACKING = EVENTS_ARRIVE_PACKING + EVENTS_ABANDONMENT_PACKING + SERVERS_PACKING ;
     public static final int ALL_EVENTS_QUALITY = EVENTS_ARRIVE_QUALITY + EVENTS_ABANDONMENT_QUALITY + SERVERS_QUALITY ;
     public static final int ALL_EVENTS_SHIPPING = EVENTS_ARRIVE_SHIPPING + EVENTS_ABANDONMENT_SHIPPING + SERVERS_SHIPPING ;
+
+    //service time
+    public static final double SERVICE_TIME_SERVER = 2.5;
 
 
 

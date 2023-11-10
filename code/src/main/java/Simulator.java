@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static model.SimulatorParameters.*;
-import static model.Ssq3.INFINITY;
-
 class Event {                     /* the next-event list    */
     double t;                         /*   next event time      */
     int x;                         /*   event status, 0 or 1 */
@@ -25,7 +23,7 @@ class T {
 public class Simulator {
 
     double sarrival = START;
-    static List<fasciaOraria> listaFasciaOraria = utils.LeggiCSV("C:\\Users\\Roberto\\Documents\\GitHub\\PMCSN\\code\\src\\main\\resources\\distribuzioneOrdiniGiornalieri.csv");
+    static List<FasciaOraria> listaFasciaOraria = utils.LeggiCSV("C:\\Users\\Roberto\\Documents\\GitHub\\PMCSN\\code\\src\\main\\resources\\distribuzioneOrdiniGiornalieri.csv");
     public static void main(String[] args) { //start point of the program execution
 
         int numberJobsServerOrder = 0;
@@ -51,6 +49,11 @@ public class Simulator {
         T t = new T();
         Event[] event = new Event[ALL_EVENTS_SERVER + ALL_EVENTS_PICKING + ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING];
         Sum[] sum = new Sum[ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING + ALL_EVENTS_PICKING + ALL_EVENTS_SERVER];
+        for (int s = 0; s < ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING + ALL_EVENTS_PICKING + ALL_EVENTS_SERVER; s++) {
+            event[s] = new Event();
+            sum [s]  = new Sum();
+        }
+
         List<Double> abandonmentPicking = new ArrayList<>();
         List<Double> abandonmentPacking = new ArrayList<>();
         List<Double> abandonmentQuality = new ArrayList<>();
@@ -60,7 +63,7 @@ public class Simulator {
         r.putSeed(123456789);
         t.current    = START;
         t.completionServer = INFINITY;
-        event[0].t   = sim.getArrival(r, t.current, 1); //first arrival to the server node
+        event[0].t   = sim.getArrivalServer(r, t.current, 1); //first arrival to the server node
         event[0].x   = 1;
 
         for (int i = 1; i < ALL_EVENTS_SERVER + ALL_EVENTS_PICKING + ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING; i++) { //messo il + 2 perchè ho aggiunto il dispatcher e +14 per i due centri dei guasti?
@@ -73,10 +76,7 @@ public class Simulator {
         for (int i = 0; i < listaFasciaOraria.size(); i++) { //stampa la lista delle fasce orarie
             System.out.println(listaFasciaOraria.get(i).getFasciaOraria() + " " + listaFasciaOraria.get(i).getFrequenza() + " " + listaFasciaOraria.get(i).getProporzione()+"%");
         }
-        for (int i = 0; i < ALL_EVENTS_SERVER + ALL_EVENTS_PICKING + ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING; i++) {
-            event[i] = new Event();
-            sum[i] = new Sum();
-        }
+
 
         while (t.current < STOP || (numberJobsServerOrder + numberJobsPickingCenter + numberJobsPackingCenter + numberJobsQualityCenter + numberJobsShippingCenter > 0)){
             e         = sim.nextEvent(event, 1);
@@ -84,13 +84,13 @@ public class Simulator {
             areaServer     += (t.next - t.current) * numberJobsServerOrder;
             t.current = t.next;
 
-            if (e == 0) { //e == 0
-                numberJobsServerOrder++;
-                event[0].t        = sim.getArrival(r, t.current, 1); //aggiustare il 1
+            if (e == 0) { //e == 0 //arrivo al server
+                numberJobsServerOrder++; //arrived job
+                event[0].t        = sim.getArrivalServer(r, t.current, 1); //aggiustare il 1
                 if (event[0].t > STOP)
                     event[0].x      = 0;
                 if (numberJobsServerOrder <= 1) {
-                    serviceServer         = sim.getService(r); //aggiustare il 1
+                    serviceServer         = sim.getServiceField(r, 2); //aggiustare il 1
 
                     sum[1].service += serviceServer;
                     sum[1].served++;
@@ -99,10 +99,10 @@ public class Simulator {
                 }
             }
             else { //e == 1
-                indexServer++;
-                numberJobsServerOrder--;
+                indexServer++; //departed job
+                numberJobsServerOrder--; //decremento il numero di job nel server
                 if (numberJobsServerOrder >= 1) {
-                    serviceServer         = sim.getService(r); //aggiustare il 1
+                    serviceServer         = sim.getServiceField(r, 2); //aggiustare il 1
                     sum[1].service += serviceServer;
                     sum[1].served++;
                     event[1].t      = t.current + serviceServer;
@@ -156,7 +156,7 @@ public class Simulator {
         return 0.0;
     }
 
-    private double getArrival(Rngs r, double currentTime, int streamIndex) {
+    private double getArrivalServer(Rngs r, double currentTime, int streamIndex) {
         /* --------------------------------------------------------------
          * generate the next arrival time with idfPoisson
          * --------------------------------------------------------------
@@ -164,8 +164,8 @@ public class Simulator {
         r.selectStream(0 + streamIndex);
 
         Rvms rvms = new Rvms();
-        //index per tutte le fasce, altrimenti sostituisci l'indice della singola fascia
-        //sarrival += rvms.idfPoisson(fasce.get(index).getMediaPoisson(), r.random());
+        int index = utils.fasciaOrariaSwitch(listaFasciaOraria, currentTime);
+        sarrival += rvms.idfPoisson(listaFasciaOraria.get(index).getMeanPoisson(), r.random());
         return (sarrival);
     }
 
@@ -205,6 +205,13 @@ public class Simulator {
                 s = i;
         }
         return (s);
+    }
+
+    double getServiceField(Rngs r, int streamIndex){
+        //servizio del centro on field --> esponenziale
+        r.selectStream(20 + streamIndex);
+        double m = SERVICE_TIME_SERVER;
+        return (-m * Math.log(1.0 - r.random()));
     }
 
 }
