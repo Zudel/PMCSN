@@ -240,7 +240,7 @@ public class Rvms{
 	return (1.0 - inGamma(x + 1, m));
     }
 
-    public long idfPoisson(double m, double u)
+    public long  idfPoisson(double m, double u)
 /* =================================== 
  * NOTE: use m > 0 and 0.0 < u < 1.0 
  * ===================================

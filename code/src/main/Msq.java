@@ -84,7 +84,7 @@ class Msq {
         number++;
         event[0].t        = m.getArrival(r);
         if (event[0].t > STOP)
-          event[0].x      = 0;
+          event[0].x      = 0; // stop the arrival process
         if (number <= SERVERS) {
           service         = m.getService(r);
           s               = m.findOne(event);

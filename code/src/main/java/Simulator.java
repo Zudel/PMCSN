@@ -2,6 +2,7 @@ import mathLib.Rngs;
 import mathLib.Rvms;
 import utils.*;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,12 +38,18 @@ public class Simulator {
         double areaPackingCenter   = 0.0;           /* time integrated number in the node */
         double areaQualityCenter   = 0.0;           /* time integrated number in the node */
         double areaShippingCenter   = 0.0;           /* time integrated number in the node */
-        double serviceServer;
+        double serviceServer = 0.0;
         long indexServer   = 0;             /* used to count departed jobs         */
         long indexPickingCenter   = 0;             /* used to count departed jobs         */
         long indexPackingCenter   = 0;             /* used to count departed jobs         */
         long indexQualityCenter   = 0;             /* used to count departed jobs         */
         long indexShippingCenter   = 0;             /* used to count departed jobs         */
+        List<Double> abandonmentPicking = new ArrayList<>();
+        List<Double> abandonmentPacking = new ArrayList<>();
+        List<Double> abandonmentQuality = new ArrayList<>();
+        List<Double> abandonmentShippingPrime = new ArrayList<>();
+        List<Double> abandonmentShippingNotPrime = new ArrayList<>();
+        List<Double> serverResponseTimes = new ArrayList<>();
 
         Simulator sim = new Simulator();
         Rngs r = new Rngs();
@@ -54,17 +61,13 @@ public class Simulator {
             sum [s]  = new Sum();
         }
 
-        List<Double> abandonmentPicking = new ArrayList<>();
-        List<Double> abandonmentPacking = new ArrayList<>();
-        List<Double> abandonmentQuality = new ArrayList<>();
-        List<Double> abandonmentShippingPrime = new ArrayList<>();
-        List<Double> abandonmentShippingNotPrime = new ArrayList<>();
-        List<Double> serverResponseTimes = new ArrayList<>();
         r.putSeed(123456789);
+
+        //inizializzazione array eventi e sum
         t.current    = START;
-        t.completionServer = INFINITY;
         event[0].t   = sim.getArrivalServer(r, t.current, 1); //first arrival to the server node
         event[0].x   = 1;
+        numberJobsServerOrder++;
 
         for (int i = 1; i < ALL_EVENTS_SERVER + ALL_EVENTS_PICKING + ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING; i++) { //messo il + 2 perchè ho aggiunto il dispatcher e +14 per i due centri dei guasti?
             event[i].t     = START;          /* this value is arbitrary because */
@@ -73,24 +76,22 @@ public class Simulator {
             sum[i].served  = 0;
         }
 
-        for (int i = 0; i < listaFasciaOraria.size(); i++) { //stampa la lista delle fasce orarie
-            System.out.println(listaFasciaOraria.get(i).getFasciaOraria() + " " + listaFasciaOraria.get(i).getFrequenza() + " " + listaFasciaOraria.get(i).getProporzione()+"%");
-        }
 
+        // INIZIO SIMULAZIONE //
+        while ( t.current < 86.400 ) {
 
-        while (t.current < STOP || (numberJobsServerOrder + numberJobsPickingCenter + numberJobsPackingCenter + numberJobsQualityCenter + numberJobsShippingCenter > 0)){
-            e         = sim.nextEvent(event, 1);
+            e         = Math.min(event[0].t, event[1].t) == event[0].t ? 0 : 1; //e = 0 o 1
             t.next    = event[e].t;
-            areaServer     += (t.next - t.current) * numberJobsServerOrder;
-            t.current = t.next;
+            areaServer     += (t.next - t.current) * numberJobsServerOrder;     //update integral of server
+            t.current = t.next;                                                 //advance the simulation clock
 
-            if (e == 0) { //e == 0 //arrivo al server
-                numberJobsServerOrder++; //arrived job
-                event[0].t        = sim.getArrivalServer(r, t.current, 1); //aggiustare il 1
-                if (event[0].t > STOP)
-                    event[0].x      = 0;
-                if (numberJobsServerOrder <= 1) {
-                    serviceServer         = sim.getServiceField(r, 2); //aggiustare il 1
+
+            if (e == 0) { //arrivo al server
+                numberJobsServerOrder++;
+                event[0].t        = sim.getArrivalServer(r, t.current, 1);
+
+                if (numberJobsServerOrder == 1) {                                   //if there is only one job in the node, schedule a completion
+                    serviceServer         = sim.getServiceServer(r, 2);
 
                     sum[1].service += serviceServer;
                     sum[1].served++;
@@ -98,56 +99,44 @@ public class Simulator {
                     event[1].x      = 1;
                 }
             }
-            else { //e == 1
-                indexServer++; //departed job
-                numberJobsServerOrder--; //decremento il numero di job nel server
-                if (numberJobsServerOrder >= 1) {
-                    serviceServer         = sim.getServiceField(r, 2); //aggiustare il 1
+            else { //partenza dal server
+                indexServer++;
+                numberJobsServerOrder--;
+                if (numberJobsServerOrder > 0) {
+                    serviceServer         = sim.getServiceServer(r, 2); //aggiustare il 1
+
                     sum[1].service += serviceServer;
                     sum[1].served++;
                     event[1].t      = t.current + serviceServer;
+                    event[1].x      = 1;
                 }
-                else
-                    event[1].x      = 0;
+                else { //the queue is empty so make the node idle and eliminate the completion event from consideration
+                    event[1].x = 0;
+                    event[1].t = INFINITY; //se non ci sono job in coda, il server rimane inattivo
+                }
+                    /*System.out.println("departed job: " + indexServer);
+                    System.out.println("numberJobsServerOrder: " + numberJobsServerOrder);
+                    System.out.println("indexServer: " + indexServer);
+                    System.out.println("event[1].t: " + event[1].t);
+                    System.out.println("event[1].x: " + event[1].x);
+                    System.out.println("event[0].t: " + event[0].t);
+                    System.out.println("event[0].x: " + event[0].x);*/
+
             }
 
-            /**
-             e         = m.nextEvent(event);
-            t.next    = event[e].t;
-            area     += (t.next - t.current) * number;
-            t.current = t.next;
-
-            if (e == 0) {
-                number++;
-                event[0].t        = m.getArrival(r);
-                if (event[0].t > STOP)
-                    event[0].x      = 0;
-                if (number <= SERVERS) {
-                    service         = m.getService(r);
-                    s               = m.findOne(event);
-                    sum[s].service += service;
-                    sum[s].served++;
-                    event[s].t      = t.current + service;
-                    event[s].x      = 1;
-                }
-            }
-            else {
-                index++;
-                number--;
-                s                 = e;
-                if (number >= SERVERS) {
-                    service         = m.getService(r);
-                    sum[s].service += service;
-                    sum[s].served++;
-                    event[s].t      = t.current + service;
-                }
-                else
-                    event[s].x      = 0;
-            }
-            */
 
 
-        }
+        } //end while
+        //stampo i risultati
+        System.out.println("indexServer: " + indexServer);
+        System.out.println("numberJobsServerOrder: " + numberJobsServerOrder);
+        System.out.println("utilizationServer: " + areaServer / indexServer);
+
+        DecimalFormat f = new DecimalFormat("###0.00");
+
+       //System.out.println("   utilization ............. =   " + f.format(sum[1].service / t.current));
+
+
 
     } //end main
 
@@ -165,13 +154,13 @@ public class Simulator {
 
         Rvms rvms = new Rvms();
         int index = utils.fasciaOrariaSwitch(listaFasciaOraria, currentTime);
-        sarrival += rvms.idfPoisson(listaFasciaOraria.get(index).getMeanPoisson(), r.random());
+        sarrival += rvms.idfPoisson(0.030/*listaFasciaOraria.get(index).getMeanPoisson()*/, r.random());
         return (sarrival);
     }
 
     int nextEvent(Event[] event, int SERVERS) {
         /* ---------------------------------------
-         * return the index of the next event type
+         * return the index of the next event type from the event list
          * ---------------------------------------
          */
         int e;
@@ -207,11 +196,12 @@ public class Simulator {
         return (s);
     }
 
-    double getServiceField(Rngs r, int streamIndex){
-        //servizio del centro on field --> esponenziale
+    double getServiceServer(Rngs r, int streamIndex){
+        //servizio del centro server --> Uniforme
         r.selectStream(20 + streamIndex);
-        double m = SERVICE_TIME_SERVER;
-        return (-m * Math.log(1.0 - r.random()));
+        int a = SERVICE_TIME_SERVER_LOWER;
+        int b = SERVICE_TIME_SERVER_UPPER;
+        return (a + (b - a) * r.random());
     }
 
 }

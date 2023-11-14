@@ -52,7 +52,7 @@ public class utils {
         List<FasciaOraria> lista = new ArrayList<>();
         for (int i = 0; i < fasceOrari.size(); i++) {
 
-            lista.add(new FasciaOraria(fasceOrari.get(i), frequenze.get(i), proporzioni.get(i),  i, 0  ,0+ 3600*i, 3600+3600*i));//3600 secondi in un ora
+            lista.add(new FasciaOraria(fasceOrari.get(i), frequenze.get(i), proporzioni.get(i),  i, 1  ,0+ 3600*i, 3600+3600*i));//3600 secondi in un ora
         }
 
 
