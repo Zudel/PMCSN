@@ -37,6 +37,12 @@ public class SimulatorParameters {
     public static final int ALL_EVENTS_QUALITY = EVENTS_ARRIVE_QUALITY + EVENTS_ABANDONMENT_QUALITY + SERVERS_QUALITY ;
     public static final int ALL_EVENTS_SHIPPING = EVENTS_ARRIVE_SHIPPING + EVENTS_ABANDONMENT_SHIPPING + SERVERS_SHIPPING ;
 
+    //per findOne
+    public static final int SERVER = 0;
+    public static final int PICKING = 1;
+    public static final int PACKING = 2;
+    public static final int QUALITY = 3;
+    public static final int SHIPPING = 4;
     //service time
     public static final double SERVICE_TIME_SERVER = 2.5;
     public static final double SERVICE_TIME_PICKING = 240;

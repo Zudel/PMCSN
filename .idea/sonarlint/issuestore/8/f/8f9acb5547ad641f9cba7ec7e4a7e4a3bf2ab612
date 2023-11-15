@@ -1,0 +1,86 @@
+
+Y
+java:S2184‚"BCast one of the operands of this addition operation to a "double".(“­—Ğ
+\
+java:S2184‚"ECast one of the operands of this subtraction operation to a "double".(“­—Ğ
+X
+java:S2184È"BCast one of the operands of this addition operation to a "double".(Ğê¸w
+Y
+java:S2184ğ"BCast one of the operands of this addition operation to a "double".(úš€‡
+Y
+java:S2184É"BCast one of the operands of this addition operation to a "double".(¤ÅÜÿ
+Y
+java:S2184å"BCast one of the operands of this addition operation to a "double".(¹ÓÑ‰
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(Ô¶ùò
+f
+java:S3973"JUse indentation to denote the code conditionally executed by this "while".(’Ã½Óùÿÿÿÿ
+a
+java:S3973“"JUse indentation to denote the code conditionally executed by this "while".(åÉ‘°
+f
+java:S3973Ô"JUse indentation to denote the code conditionally executed by this "while".(üŸŠâúÿÿÿÿ
+f
+java:S3973×"JUse indentation to denote the code conditionally executed by this "while".(ş¼œ“ÿÿÿÿÿ
+a
+java:S3973ü"JUse indentation to denote the code conditionally executed by this "while".(ÀÖÜØ
+f
+java:S3973ÿ"JUse indentation to denote the code conditionally executed by this "while".(ı™† ıÿÿÿÿ
+c
+java:S3973Ü"GUse indentation to denote the code conditionally executed by this "if".(‹£ô¬ûÿÿÿÿ
+c
+java:S3973ê"GUse indentation to denote the code conditionally executed by this "if".(‹£ô¬ûÿÿÿÿ
+d	java:S1162"ORename this field "TINY" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(œ¡¨É
+g	java:S1163"RRename this field "SQRT2PI" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ğÓò÷
+7
+java:S11702"!Make this final field static too.(œ¡¨É
+7
+java:S11703"!Make this final field static too.(ğÓò÷
+—
+java:S11865"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(¡÷µæ
+>
+java:S1172S"(Remove this unused method parameter "x".(ÛÁ­¡
+:
+java:S1659t"Declare "t" on a separate line.(šÏóİùÿÿÿÿ
+;
+java:S1659»"Declare "t" on a separate line.(šÏóİùÿÿÿÿ
+D
+java:S1172†"(Remove this unused method parameter "x".(ÕØšÆıÿÿÿÿ
+6
+java:S1659×"Declare "x" on a separate line.(¯¼ìÙ
+6
+java:S1659€"Declare "x" on a separate line.(¹’–ø
+;
+java:S1659Ğ"Declare "s" on a separate line.(Â‰î¯ÿÿÿÿÿ
+6
+java:S1659å"Declare "x" on a separate line.(ïÄë
+;
+java:S1659ö"Declare "t" on a separate line.(šÏóİùÿÿÿÿ
+E
+java:S1905ø")Remove this unnecessary cast to "double".(½êîšüÿÿÿÿ
+@
+java:S1905ú")Remove this unnecessary cast to "double".(ÛÑŠ¾
+;
+java:S1659ƒ"Declare "t" on a separate line.(šÏóİùÿÿÿÿ
+6
+java:S1659“"Declare "x" on a separate line.(¹’–ø
+9
+java:S1659¯""Declare "temp" on a separate line.(Ú¹‡Ğ
+F
+java:S1197®"*Move the array designators [] to the type.(„‡Õ¾øÿÿÿÿ
+n
+java:S3776ê"RRefactor this method to reduce its Cognitive Complexity from 16 to the 15 allowed.(¤¿Âáıÿÿÿÿ
+\
+java:S1659÷"@Declare "sum" and all following declarations on a separate line.(‹ÎÕòùÿÿÿÿ
+F
+java:S1197ø"*Move the array designators [] to the type.(êîÓŞùÿÿÿÿ
+F
+java:S1197ù"*Move the array designators [] to the type.(‰¿«ÿÿÿÿÿ
+F
+java:S1197ú"*Move the array designators [] to the type.(Åè£øÿÿÿÿ
+Z
+java:S1659¸"CDeclare "factor" and all following declarations on a separate line.(¡·ëö
+F
+java:S1197¹"*Move the array designators [] to the type.(‰¿«ÿÿÿÿÿ
+F
+java:S1197º"*Move the array designators [] to the type.(Åè£øÿÿÿÿ
+<
+java:S1128/"&Remove this unused import 'java.math'.(âî©

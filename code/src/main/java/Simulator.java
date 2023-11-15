@@ -18,11 +18,23 @@ class Sum {                      /* accumulated sums of                */
 class T {
     double current;                   /* current time                       */
     double next;                      /* next (most imminent) event time    */
-    double completionServer;              /* next completion time server               */
 }
 
-public class Simulator {
+/**
+ * evento 0: arrivo ordine
+ * evento 1: completamento server e arrivo picking
+ * evento 2: abbandono picking
+ * evento 3: completamento picking e arrivo packing (il completamento va inteso come un unico evento , però si deve tener conto del numero di server del centro, e quindi di findOne adattare il contatore)
+ * evento 4: abbandono packing
+ * evento 5: completamento packing e arrivo quality
+ * evento 6: abbandono quality
+ * evento 7: completamento quality e arrivo shipping
+ * evento 8: abbandono shipping
+ * evento 9: completamento shipping
+ * evento 10: completamento packing e arrivo shipping
+ * */
 
+public class Simulator {
     double sarrival = START;
     static List<FasciaOraria> listaFasciaOraria = utils.LeggiCSV("C:\\Users\\Roberto\\Documents\\GitHub\\PMCSN\\code\\src\\main\\resources\\distribuzioneOrdiniGiornalieri.csv");
     public static void main(String[] args) { //start point of the program execution
@@ -107,7 +119,7 @@ public class Simulator {
 
             }
 
-            else if(e == ALL_EVENTS_SERVER - 1) { //partenza dal server
+            else if(e == 1) { //partenza dal server & arrivo al picking center
                 indexServer++;
                 numberJobsServerOrder--;
                 if (numberJobsServerOrder > 0) {
@@ -117,40 +129,24 @@ public class Simulator {
                     sum[1].served++;
                     event[1].t = t.current + serviceServer;
                     event[1].x = 1;
-                    event[ALL_EVENTS_SERVER].x = 1;
-                    event[ALL_EVENTS_SERVER].t = event[1].t; //il tempo di completamento del server è uguale al tempo di arrivo nel centro di picking
 
-                } else { //the queue is empty so make the node idle and eliminate the completion event from consideration
+                } else {
                     event[1].x = 0;
                 }
-            }
 
-            else if(e == ALL_EVENTS_SERVER ){ //arrivo al picking center
+                //arrivo al picking center
                 numberJobsPickingCenter++;
-                event[ALL_EVENTS_SERVER].t = t.current + 0.1;
-                if(numberJobsServerOrder == 0){ //se non ci sono job in coda al server
-                    event[ALL_EVENTS_SERVER].x = 0; //il server rimane inattivo
-
-                }
-                else {
-                    event[ALL_EVENTS_SERVER].x = 1; //il server è attivo
-
-                }
-
-
                 if (numberJobsPickingCenter <= SERVERS_PICKING) { // if there is a free server
                     double service         = sim.getServiceMultiServer(r, 4);
-                    sPickingCenter               = sim.findOne(event);
+                    sPickingCenter               = sim.findOne(event, PICKING);
                     sum[sPickingCenter].service += service;
                     sum[sPickingCenter].served++;
                     event[sPickingCenter].t      = t.current + service;
                     event[sPickingCenter].x      = 1;
-
                 }
 
-
             }
-            else if( ALL_EVENTS_SERVER < e && e <= ALL_EVENTS_SERVER + ALL_EVENTS_PICKING ) { //partenza dal picking center
+            else if( 2 < e && e <= 43 ) { //partenza dal picking center e arrivo al packing center
                 indexPickingCenter++;
                 numberJobsPickingCenter--;
                 sPickingCenter = e;
@@ -164,6 +160,7 @@ public class Simulator {
                 }
 
 
+
             }
             /*System.out.println("(tempo arrivo al server )event[0].t: " + event[0].t);
             System.out.println("(tempo partenze dal server) event[1].t: " + event[1].t);
@@ -171,14 +168,14 @@ public class Simulator {
             System.out.println("tempo partenza dal picking event[ALL_EVENTS_SERVER + ALL_EVENTS_PICKING]: " + event[ALL_EVENTS_SERVER + ALL_EVENTS_PICKING ].t);
             */
 
-            System.out.println("e: " + e);
+            /*System.out.println("e: " + e);
             for (int i = 0; i < ALL_EVENTS_SERVER + ALL_EVENTS_PICKING; i++) {
                 System.out.println("event[" + i + "].t: " + event[i].t);
             }
             System.out.println("numero di job nel server: " + numberJobsServerOrder);
             System.out.println("partenze dal server: " + indexServer);
             System.out.println("numberJobsPickingCenter: " + numberJobsPickingCenter);
-            System.out.println("partenze dal picking center: " + indexPickingCenter);
+            System.out.println("partenze dal picking center: " + indexPickingCenter);*/
 
 
         } //end while
@@ -250,19 +247,27 @@ public class Simulator {
         return (e);
     }
 
-    int findOne(Event [] event) {
+    int findOne(Event [] event,int center){
         /* -----------------------------------------------------
          * return the index of the available server idle longest
          * -----------------------------------------------------
          */
-        int s;
-        int i = 1;
+        int s, i;
+        switch (center){
+            case PICKING:
+                i = 3;
+                break;
+            default:
+                i = -1;
+                System.out.println("Errore nella selezione del centro");
+                break;
+        }
+
 
         while (event[i].x == 1)       /* find the index of the first available */
             i++;                        /* (idle) server                         */
         s = i;
-        System.out.println("s: " + s);
-        while (i < ALL_EVENTS_SERVER + ALL_EVENTS_PICKING ) {         /* now, check the others to find which   */
+        while (i < SERVERS_PICKING ) {         /* now, check the others to find which   */
             i++;                        /* has been idle longest                 */
             if ((event[i].x == 0) && (event[i].t < event[s].t))
                 s = i;

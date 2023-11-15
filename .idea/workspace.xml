@@ -5,14 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="73dcb141-e879-4a17-87af-80d7f7942b65" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/Msq.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/Msq.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/Simulator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/FasciaOraria.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/FasciaOraria.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/utils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,7 +129,8 @@
       <workItem from="1699957458146" duration="5710000" />
       <workItem from="1699967492040" duration="14984000" />
       <workItem from="1699992162298" duration="4044000" />
-      <workItem from="1700036555702" duration="8377000" />
+      <workItem from="1700036555702" duration="8620000" />
+      <workItem from="1700065961695" duration="4968000" />
     </task>
     <servers />
   </component>

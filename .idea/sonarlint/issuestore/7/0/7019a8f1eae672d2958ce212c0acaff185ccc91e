@@ -1,0 +1,19 @@
+
+E
+java:S3740"/Provide the parametrized type for this generic.(ÄàÈˆ
+J
+java:S3740"/Provide the parametrized type for this generic.(£äø†ıÿÿÿÿ
+E
+java:S3740"/Provide the parametrized type for this generic.(ŞŒÈ
+g	java:S101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(·’Ê¶şÿÿÿÿ
+_
+java:S35180"DMake sure "sommaFrequenze" can't be zero before doing this division.(ÿ¼ñ¼şÿÿÿÿ
+U
+java:S1118":Add a private constructor to hide the implicit public one.(·’Ê¶şÿÿÿÿ
+c	java:S100"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(•ß‡¦
+K
+java:S1481"5Remove this unused "sommaProporzioni" local variable.(‹êû
+V	java:S125""<This block of commented-out lines of code should be removed.(œ„Òßûÿÿÿÿ
+c
+java:S21530"HRemove the boxing to "Double"; The argument is already of the same type.(ÿ¼ñ¼şÿÿÿÿ
+Q	java:S125="<This block of commented-out lines of code should be removed.(¤ŒúÖ

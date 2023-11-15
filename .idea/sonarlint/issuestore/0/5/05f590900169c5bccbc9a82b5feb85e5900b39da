@@ -1,0 +1,84 @@
+
+n
+java:S1301Ê"KReplace this "switch" statement by "if" statements to increase readability.(¢†Æ˜üÿÿÿÿ8×Ê¡½1
+n
+java:S1301€"KReplace this "switch" statement by "if" statements to increase readability.(ƒÉøâøÿÿÿÿ8×Ê¡½1
+o
+java:S3776("RRefactor this method to reduce its Cognitive Complexity from 25 to the 15 allowed.(Ÿ°Ô¬8€Ì¡½1
+d
+java:S1854F"GRemove this useless assignment to local variable "serverResponseTimes".(œê‰ê8€Ì¡½1
+q
+java:S1854E"ORemove this useless assignment to local variable "abandonmentShippingNotPrime".(ı‘ÏÚùÿÿÿÿ8€Ì¡½1
+n
+java:S1854D"LRemove this useless assignment to local variable "abandonmentShippingPrime".(áÿå•øÿÿÿÿ8€Ì¡½1
+h
+java:S1854C"FRemove this useless assignment to local variable "abandonmentQuality".(€÷¤øÿÿÿÿÿ8€Ì¡½1
+c
+java:S1854B"FRemove this useless assignment to local variable "abandonmentPacking".(ëôà·8€Ì¡½1
+h
+java:S1854A"FRemove this useless assignment to local variable "abandonmentPicking".(¿½Èûÿÿÿÿ8€Ì¡½1
+]
+java:S1854;"ARemove this useless assignment to local variable "serviceServer".(³­D8€Ì¡½1
+h
+java:S1854:"FRemove this useless assignment to local variable "areaShippingCenter".(üºÔËıÿÿÿÿ8€Ì¡½1
+b
+java:S18549"ERemove this useless assignment to local variable "areaQualityCenter".(µÕ¾É8€Ì¡½1
+g
+java:S18548"ERemove this useless assignment to local variable "areaPackingCenter".(¶ßŠ¸ıÿÿÿÿ8€Ì¡½1
+S
+java:S1854À"5Remove this useless assignment to local variable "f".(¯ÕĞª8Ì¡½1
+X
+java:S1481,"<Remove this unused "numberJobsPackingCenter" local variable.(óÜã68Ì¡½1
+Y
+java:S1481-"<Remove this unused "numberJobsQualityCenter" local variable.(ë †ƒ8Ì¡½1
+Y
+java:S1481."=Remove this unused "numberJobsShippingCenter" local variable.(„úÀv8‚Ì¡½1
+U
+java:S14812"3Remove this unused "sPackingCenter" local variable.(®›”úşÿÿÿÿ8‚Ì¡½1
+U
+java:S14813"3Remove this unused "sQualityCenter" local variable.(şÎêÇÿÿÿÿÿ8‚Ì¡½1
+Q
+java:S14814"4Remove this unused "sShippingCenter" local variable.(à•ˆÀ8‚Ì¡½1
+L
+java:S14816"/Remove this unused "areaServer" local variable.(ç­Ê¡8‚Ì¡½1
+S
+java:S14817"6Remove this unused "areaPickingCenter" local variable.(’‡å—8‚Ì¡½1
+X
+java:S14818"6Remove this unused "areaPackingCenter" local variable.(¶ßŠ¸ıÿÿÿÿ8‚Ì¡½1
+S
+java:S14819"6Remove this unused "areaQualityCenter" local variable.(µÕ¾É8‚Ì¡½1
+Y
+java:S1481:"7Remove this unused "areaShippingCenter" local variable.(üºÔËıÿÿÿÿ8‚Ì¡½1
+T
+java:S1481>"7Remove this unused "indexPackingCenter" local variable.(Êáÿß8ƒÌ¡½1
+Y
+java:S1481?"7Remove this unused "indexQualityCenter" local variable.(’Î˜øüÿÿÿÿ8ƒÌ¡½1
+Z
+java:S1481@"8Remove this unused "indexShippingCenter" local variable.(Û˜ŞÓşÿÿÿÿ8ƒÌ¡½1
+Y
+java:S1481A"7Remove this unused "abandonmentPicking" local variable.(¿½Èûÿÿÿÿ8ƒÌ¡½1
+T
+java:S1481B"7Remove this unused "abandonmentPacking" local variable.(ëôà·8„Ì¡½1
+Y
+java:S1481C"7Remove this unused "abandonmentQuality" local variable.(€÷¤øÿÿÿÿÿ8„Ì¡½1
+_
+java:S1481D"=Remove this unused "abandonmentShippingPrime" local variable.(áÿå•øÿÿÿÿ8„Ì¡½1
+b
+java:S1481E"@Remove this unused "abandonmentShippingNotPrime" local variable.(ı‘ÏÚùÿÿÿÿ8„Ì¡½1
+U
+java:S1481F"8Remove this unused "serverResponseTimes" local variable.(œê‰ê8„Ì¡½1
+Y	java:S125¥"<This block of commented-out lines of code should be removed.(ğ‡ÏÀ8‡Ì¡½1
+Y	java:S125«"<This block of commented-out lines of code should be removed.(ÅÊÕô8‡Ì¡½1
+V	java:S106¸"9Replace this use of System.out or System.err by a logger.(¶×¼Ğ8ˆÌ¡½1
+[	java:S106¹"9Replace this use of System.out or System.err by a logger.(ÏÊÍ­ÿÿÿÿÿ8ˆÌ¡½1
+[	java:S106º"9Replace this use of System.out or System.err by a logger.(©¶§Úûÿÿÿÿ8ˆÌ¡½1
+[	java:S106»"9Replace this use of System.out or System.err by a logger.(¶®»çşÿÿÿÿ8ˆÌ¡½1
+V	java:S106¼"9Replace this use of System.out or System.err by a logger.(°Ú”Ş8ˆÌ¡½1
+V	java:S106½"9Replace this use of System.out or System.err by a logger.(Ô¤¹¥8ˆÌ¡½1
+D
+java:S1481À"&Remove this unused "f" local variable.(¯ÕĞª8ŠÌ¡½1
+T
+java:S3984Ï"6Throw this exception or remove this useless statement.(íòñ†8‹Ì¡½1
+B
+java:S1659ÿ"Declare "i" on a separate line.(–¯Ã¦şÿÿÿÿ8Ì¡½1
+[	java:S106†"9Replace this use of System.out or System.err by a logger.(±³ûÍıÿÿÿÿ8Ì¡½1
