@@ -13,12 +13,14 @@ import java.util.List;
  * */
 public class utils {
     static List<String> fasceOrari = new ArrayList();
-    static List<Integer> frequenze = new ArrayList();
+    static List<Double> frequenze = new ArrayList();
     static List<Double> proporzioni = new ArrayList();
+   
 
     public static List<FasciaOraria> LeggiCSV(String filePath) {
 
         double sommaProporzioni = 0;
+        double frequenzaOraria = 0;
 
         try {
             FileReader fileReader = new FileReader(filePath);
@@ -28,7 +30,7 @@ public class utils {
             //csvReader.readNext(); // Ignora l'intestazione
             while ((line = csvReader.readNext()) != null) {
                     fasceOrari.add(line[0]); // Aggiungi la fascia oraria alla lista
-                    frequenze.add(Integer.valueOf(line[1])); // Aggiungi la frequenza alla lista
+                    frequenze.add(Double.valueOf(line[1])); // Aggiungi la frequenza alla lista
                     //proporzioni.add(Double.valueOf(line[2]));
             }
 
@@ -51,16 +53,13 @@ public class utils {
         //crea una lista di ritorno che crea oggetti fasciaOraria con i valori letti dal csv
         List<FasciaOraria> lista = new ArrayList<>();
         for (int i = 0; i < fasceOrari.size(); i++) {
-
-            lista.add(new FasciaOraria(fasceOrari.get(i), frequenze.get(i), proporzioni.get(i),  i, 1  ,0+ 3600*i, 3600+3600*i));//3600 secondi in un ora
+            frequenzaOraria = frequenze.get(i) / 3600;
+            lista.add(new FasciaOraria(fasceOrari.get(i), frequenzaOraria,  proporzioni.get(i),  i  ,0+ 3600*i, 3600+3600*i));//3600 secondi in un ora
         }
 
-
         //stampa a video i risultati
-
-
-        /*for (int i = 0; i < fasceOrari.size(); i++) {
-            System.out.println("Fascia oraria: " + fasceOrari.get(i) + ", Frequenza: " + frequenze.get(i) + ", Proporzione: " + proporzioni.get(i));
+       /* for (int i = 0; i < fasceOrari.size(); i++) {
+            System.out.println("Fascia oraria: " + lista.get(i).getFasciaOraria() + ", Frequenza: " + lista.get(i).getFrequenza() +", Mean Poisson: " + lista.get(i).getMeanPoisson());
 
         System.out.println("Somma delle frequenze: " + sommaFrequenze
             + ", Somma delle proporzioni: " + sommaProporzioni);

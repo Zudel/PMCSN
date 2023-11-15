@@ -2,7 +2,7 @@ package utils;
 
 public class FasciaOraria {
     private String fasciaOraria;
-    private int frequenza;
+    private double frequenza;
     private double proporzione;
     private int index;
     private double meanPoisson;
@@ -10,14 +10,14 @@ public class FasciaOraria {
     private int estremoSuperiore;
 
 
-    public FasciaOraria(String fasciaOraria, int frequenza, double proporzione, int index, double meanPoisson, int estremoInferiore, int estremoSuperiore) {
+    public FasciaOraria(String fasciaOraria, double frequenza, double proporzione, int index, int estremoInferiore, int estremoSuperiore) {
         this.fasciaOraria = fasciaOraria;
-        this.frequenza = frequenza;
-        this.proporzione = proporzione * 100; // moltiplica per 100 per avere la percentuale
+        this.frequenza = frequenza; // dividi per 3600 per avere la frequenza oraria in secondi
+        this.proporzione = proporzione ; // moltiplica per 100 per avere la percentuale
         this.index = index;
         this.estremoInferiore = estremoInferiore;
         this.estremoSuperiore = estremoSuperiore;
-        this.meanPoisson = meanPoisson;
+        this.meanPoisson = 1/this.frequenza;
 
     }
     public double getMeanPoisson() {
@@ -41,7 +41,7 @@ public class FasciaOraria {
         this.fasciaOraria = fasciaOraria;
     }
 
-    public int getFrequenza() {
+    public double getFrequenza() {
         return frequenza;
     }
 

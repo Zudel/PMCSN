@@ -7,6 +7,7 @@ public class SimulatorParameters {
     public static final double    INFINITY =  100.0 * STOP;              /* number of servers              */
     public static final double STOP_BATCH    = 10958; /* close the door batch*/
     public static final double TOTAL_ARRIVAL_TO_SERVER    = 12145; /* close the door batch*/
+    public static final double DELAY_NEXT_CENTER = 0.0001; /* ritardo nel passaggio da un centro all'altro*/
 
 
     //probability
@@ -38,6 +39,10 @@ public class SimulatorParameters {
 
     //service time
     public static final double SERVICE_TIME_SERVER = 2.5;
+    public static final double SERVICE_TIME_PICKING = 240;
+    public static final double SERVICE_TIME_PACKING = 120;
+    public static final double SERVICE_TIME_QUALITY = 150;
+    public static final double SERVICE_TIME_SHIPPING = 2400;
     public static final int SERVICE_TIME_SERVER_LOWER = 2;
     public static final int SERVICE_TIME_SERVER_UPPER = 3;
 

@@ -83,9 +83,9 @@ class Msq {
       if (e == 0) {                                  /* process an arrival*/
         number++;
         event[0].t        = m.getArrival(r);
-        if (event[0].t > STOP)
+        if (event[0].t > STOP) // if arrival time is after STOP
           event[0].x      = 0; // stop the arrival process
-        if (number <= SERVERS) {
+        if (number <= SERVERS) { // if there is a free server
           service         = m.getService(r);
           s               = m.findOne(event);
           sum[s].service += service;
@@ -158,7 +158,6 @@ class Msq {
     sarrival += exponential(2.0, r);
     return (sarrival);
   }
-
 
   double getService(Rngs r) {
 /* ------------------------------
