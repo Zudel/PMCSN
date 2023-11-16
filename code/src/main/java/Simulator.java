@@ -23,16 +23,10 @@ class T {
 /**
  * evento 0: arrivo ordine
  * evento 1: completamento server e arrivo picking
- * evento 2: abbandono picking
- * evento 3: completamento picking e arrivo packing (il completamento va inteso come un unico evento , però si deve tener conto del numero di server del centro, e quindi di findOne adattare il contatore)
- * evento 4: abbandono packing
- * evento 5: completamento packing e arrivo quality
- * evento 6: abbandono quality
- * evento 7: completamento quality e arrivo shipping
- * evento 8: abbandono shipping
- * evento 9: completamento shipping
- * evento 10: completamento packing e arrivo shipping
- * */
+ * evento 2 - 42 completamento picking e arrivo packing
+ * evento 43 - 83 completamento packing e arrivo quality
+ * evento
+ */
 
 public class Simulator {
     double sarrival = START;
@@ -101,6 +95,9 @@ public class Simulator {
             t.next    = event[e].t;
             areaServer     += (t.next - t.current) * numberJobsServerOrder;     //update integral of server
             areaPickingCenter     += (t.next - t.current) * numberJobsPickingCenter;     //update integral of picking center
+            areaPackingCenter     += (t.next - t.current) * numberJobsPackingCenter;     //update integral of packing center
+            areaQualityCenter     += (t.next - t.current) * numberJobsQualityCenter;     //update integral of quality center
+            areaShippingCenter     += (t.next - t.current) * numberJobsShippingCenter;     //update integral of shipping center
             t.current = t.next;                                                 //advance the simulation clock
 
             if (e == 0) { //arrivo al server
@@ -146,7 +143,7 @@ public class Simulator {
                 }
 
             }
-            else if( 2 < e && e <= 43 ) { //partenza dal picking center e arrivo al packing center
+            else if( 2 <= e && e <= 42 ) { //partenza dal picking center e arrivo al packing center
                 indexPickingCenter++;
                 numberJobsPickingCenter--;
                 sPickingCenter = e;
@@ -159,34 +156,65 @@ public class Simulator {
                     event[sPickingCenter].x = 0;
                 }
 
+                //arrivo al packing center
+                numberJobsPackingCenter++;
+                if (numberJobsPackingCenter <= SERVERS_PACKING) { // if there is a free server
+                    double service         = sim.getServiceMultiServer(r, 5);
+                    sPackingCenter               = sim.findOne(event, PACKING);
+                    sum[sPackingCenter].service += service;
+                    sum[sPackingCenter].served++;
+                    event[sPackingCenter].t      = t.current + service;
+                    event[sPackingCenter].x      = 1;
+                }
+            }
+            if ( (42< e) && (e <= ALL_EVENTS_PICKING + SERVERS_PACKING )){
+                indexPackingCenter++;
+                numberJobsPackingCenter--;
+                sPackingCenter = e;
+                if (numberJobsPackingCenter > SERVERS_PACKING) {
+                    double service = sim.getServiceMultiServer(r,5);
+                    sum[sPackingCenter].service += service;
+                    sum[sPackingCenter].served++;
+                    event[sPackingCenter].t = t.current + service;
+                } else { //the queue is empty so make the node idle and eliminate the completion event from consideration
+                    event[sPackingCenter].x = 0;
+                }
+
+
+
 
 
             }
-            /*System.out.println("(tempo arrivo al server )event[0].t: " + event[0].t);
+            /*System.out.println("(tempo arrivo al server )event[0].t: " + event[0].t) ;
             System.out.println("(tempo partenze dal server) event[1].t: " + event[1].t);
             System.out.println("(tempo arrivo al picking)event[2].t: " + event[2].t);
             System.out.println("tempo partenza dal picking event[ALL_EVENTS_SERVER + ALL_EVENTS_PICKING]: " + event[ALL_EVENTS_SERVER + ALL_EVENTS_PICKING ].t);
             */
 
-            /*System.out.println("e: " + e);
-            for (int i = 0; i < ALL_EVENTS_SERVER + ALL_EVENTS_PICKING; i++) {
+
+            for (int i = 0; i <ALL_EVENTS_PICKING + SERVERS_PACKING; i++) {
                 System.out.println("event[" + i + "].t: " + event[i].t);
             }
             System.out.println("numero di job nel server: " + numberJobsServerOrder);
             System.out.println("partenze dal server: " + indexServer);
             System.out.println("numberJobsPickingCenter: " + numberJobsPickingCenter);
-            System.out.println("partenze dal picking center: " + indexPickingCenter);*/
+            System.out.println("partenze dal picking center: " + indexPickingCenter);
 
 
         } //end while
         //stampo i risultati
-
-        System.out.println("partenze dal server: " + indexServer);
         System.out.println("numeri di job nel server: " + numberJobsServerOrder);
-        System.out.println("partenze dal centro di picking: " + indexPickingCenter);
+        System.out.println("partenze dal server: " + indexServer);
         System.out.println("numero di job nel centro di picking: " + numberJobsPickingCenter);
-        System.out.println("utilizzazione Server: " + sum[1].service / t.current);
-        System.out.println("utilizzazione Picking Center: " + sum[ALL_EVENTS_SERVER + ALL_EVENTS_PICKING - 1].service / t.current);
+        System.out.println("partenze dal centro di picking: " + indexPickingCenter);
+        System.out.println("numero di job nel centro di packing: " + numberJobsPackingCenter);
+        System.out.println("partenze dal centro di packing: " + indexPackingCenter);
+        System.out.println("numero di job nel centro di qualità: " + numberJobsQualityCenter);
+        System.out.println("partenze dal centro di qualità: " + indexQualityCenter);
+        System.out.println("numero di job nel centro di shipping: " + numberJobsShippingCenter);
+        System.out.println("partenze dal centro di shipping: " + indexShippingCenter);
+        //System.out.println("utilizzazione Server: " + sum[1].service / t.current);
+
 
 
         DecimalFormat f = new DecimalFormat("###0.00");
@@ -237,7 +265,7 @@ public class Simulator {
 
         e = i;
 
-        while (i < ALL_EVENTS_SERVER + ALL_EVENTS_PICKING ) {         /* now, check the others to find which  */
+        while (i < ALL_EVENTS_PICKING + SERVERS_PACKING) {         /* now, check the others to find which  */
             i++;
             /* event type is most imminent          */
             if ((event[i].x == 1) && (event[i].t < event[e].t))
@@ -256,6 +284,9 @@ public class Simulator {
         switch (center){
             case PICKING:
                 i = 3;
+                break;
+            case PACKING:
+                i = 44;
                 break;
             default:
                 i = -1;
