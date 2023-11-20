@@ -23,12 +23,15 @@ class T {
 /**
  * evento 0: arrivo ordine
  * evento 1: completamento server e arrivo picking
- * evento 2 - 42 completamento picking e arrivo packing
- * evento 43 - 83 completamento packing e arrivo quality
- * evento
+ * evento (1 , ServerPicking] completamento picking e arrivo packing
+ * evento (ServerPicking ,ServerPacking] completamento packing e arrivo quality center o arrivo shipping
+ * evento (ServerPacking, ServerQuality] completamento quality e arrivo shipping o ritorno picking
+ * evento (ServerQuality, ServerShipping] completamento shipping
  */
 
 public class Simulator {
+    private static double service;
+    private static double abandontTime;
     double sarrival = START;
     static List<FasciaOraria> listaFasciaOraria = utils.LeggiCSV("C:\\Users\\Roberto\\Documents\\GitHub\\PMCSN\\code\\src\\main\\resources\\distribuzioneOrdiniGiornalieri.csv");
     public static void main(String[] args) { //start point of the program execution
@@ -40,10 +43,16 @@ public class Simulator {
         int numberJobsShippingCenter = 0;
         int    e;                      /* next event index                   */
 
-        int    sPickingCenter;                      /* server index                       */
-        int    sPackingCenter;                      /* server index                       */
-        int    sQualityCenter;                      /* server index                       */
-        int    sShippingCenter;                      /* server index                       */
+        int    sPickingCenter;                      /* picking index                       */
+        int    sPackingCenter;                      /* packing index                       */
+        int    sQualityCenter;                      /* quality center index                       */
+        int    sShippingCenter;                      /* shipping center index                       */
+
+        int abandonedPicking = 0;                   /* number of abandoned jobs                       */
+        int abandonedPacking = 0;
+        int abandonedQuality = 0;
+        int abandonedShippingPrime = 0;
+        int abandonedShippingNotPrime = 0;
 
         double areaServer   = 0.0;           /* time integrated number in the node */
         double areaPickingCenter   = 0.0;           /* time integrated number in the node */
@@ -66,9 +75,9 @@ public class Simulator {
         Simulator sim = new Simulator();
         Rngs r = new Rngs();
         T t = new T();
-        Event[] event = new Event[ALL_EVENTS_SERVER + ALL_EVENTS_PICKING + ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING];
-        Sum[] sum = new Sum[ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING + ALL_EVENTS_PICKING + ALL_EVENTS_SERVER];
-        for (int s = 0; s < ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING + ALL_EVENTS_PICKING + ALL_EVENTS_SERVER; s++) {
+        Event[] event = new Event[ALL_EVENTS];
+        Sum[] sum = new Sum[ALL_EVENTS];
+        for (int s = 0; s < ALL_EVENTS ; s++) {
             event[s] = new Event();
             sum [s]  = new Sum();
         }
@@ -81,7 +90,7 @@ public class Simulator {
         event[0].x   = 1;
         numberJobsServerOrder++;
 
-        for (int i = 1; i < ALL_EVENTS_SERVER + ALL_EVENTS_PICKING + ALL_EVENTS_PACKING + ALL_EVENTS_QUALITY + ALL_EVENTS_SHIPPING; i++) { //messo il + 2 perchè ho aggiunto il dispatcher e +14 per i due centri dei guasti?
+        for (int i = 1; i <ALL_EVENTS; i++) {
             event[i].t     = START;          /* this value is arbitrary because */
             event[i].x     = 0;              /* all servers are initially idle  */
             sum[i].service = 0.0;
@@ -113,7 +122,6 @@ public class Simulator {
                 }
                 numberJobsServerOrder++;
                 event[0].t        = sim.getArrivalServer(r, t.current, 1);
-
             }
 
             else if(e == 1) { //partenza dal server & arrivo al picking center
@@ -134,8 +142,8 @@ public class Simulator {
                 //arrivo al picking center
                 numberJobsPickingCenter++;
                 if (numberJobsPickingCenter <= SERVERS_PICKING) { // if there is a free server
-                    double service         = sim.getServiceMultiServer(r, 4);
-                    sPickingCenter               = sim.findOne(event, PICKING);
+                    service         = sim.getServiceMultiServer(r, 0);
+                    sPickingCenter               = sim.findOne(event,1);
                     sum[sPickingCenter].service += service;
                     sum[sPickingCenter].served++;
                     event[sPickingCenter].t      = t.current + service;
@@ -143,12 +151,12 @@ public class Simulator {
                 }
 
             }
-            else if( 2 <= e && e <= 42 ) { //partenza dal picking center e arrivo al packing center
+            else if( (1 < e) && (e <= SERVERS_PICKING + ALL_EVENTS_SERVER) ) { //partenza dal picking center e arrivo al packing center [2,41]
                 indexPickingCenter++;
                 numberJobsPickingCenter--;
                 sPickingCenter = e;
                 if (numberJobsPickingCenter > SERVERS_PICKING) {
-                    double service = sim.getServiceMultiServer(r,4);
+                    service = sim.getServiceMultiServer(r,4);
                     sum[sPickingCenter].service += service;
                     sum[sPickingCenter].served++;
                     event[sPickingCenter].t = t.current + service;
@@ -160,14 +168,15 @@ public class Simulator {
                 numberJobsPackingCenter++;
                 if (numberJobsPackingCenter <= SERVERS_PACKING) { // if there is a free server
                     double service         = sim.getServiceMultiServer(r, 5);
-                    sPackingCenter               = sim.findOne(event, PACKING);
+                    sPackingCenter               = sim.findOne(event,PACKING);
                     sum[sPackingCenter].service += service;
                     sum[sPackingCenter].served++;
                     event[sPackingCenter].t      = t.current + service;
                     event[sPackingCenter].x      = 1;
                 }
             }
-            if ( (42< e) && (e <= ALL_EVENTS_PICKING + SERVERS_PACKING )){
+
+            else if ( (SERVERS_PICKING + ALL_EVENTS_SERVER< e) && (e <= ALL_EVENTS_PICKING + SERVERS_PACKING )){ //partenza dal packing center e arrivo al quality center o shipping center [42, 62]
                 indexPackingCenter++;
                 numberJobsPackingCenter--;
                 sPackingCenter = e;
@@ -180,28 +189,178 @@ public class Simulator {
                     event[sPackingCenter].x = 0;
                 }
 
+                r.selectStream(18); //scelgo se andare al quality center o allo shipping center
+                double prob = r.random();
 
-
-
+                if(prob <= QUALITY_CENTER_PROB){        //arrivo al quality center
+                    numberJobsQualityCenter++;
+                    if (numberJobsQualityCenter <= SERVERS_QUALITY) { // if there is a free server
+                        service         = sim.getServiceMultiServer(r, 6);
+                        sQualityCenter               = sim.findOne(event,QUALITY);
+                        sum[sQualityCenter].service += service;
+                        sum[sQualityCenter].served++;
+                        event[sQualityCenter].t      = t.current + service;
+                        event[sQualityCenter].x      = 1;
+                    }
+                }
+                else {                                  //arrivo allo shipping center
+                    numberJobsShippingCenter++;
+                    if(numberJobsShippingCenter <= SERVERS_SHIPPING){
+                        double orderType = r.random();
+                        if(orderType <= ORDER_PRIME)
+                            orderType = 1;
+                        else
+                            orderType = 2;
+                        service         = sim.getServiceMultiServerPriority(r, 7, orderType);
+                        sShippingCenter               = sim.findOne(event,SHIPPING);
+                        sum[sShippingCenter].service += service;
+                        sum[sShippingCenter].served++;
+                        event[sShippingCenter].t      = t.current + service;
+                        event[sShippingCenter].x      = 1;
+                    }
+                }
 
             }
-            /*System.out.println("(tempo arrivo al server )event[0].t: " + event[0].t) ;
-            System.out.println("(tempo partenze dal server) event[1].t: " + event[1].t);
-            System.out.println("(tempo arrivo al picking)event[2].t: " + event[2].t);
-            System.out.println("tempo partenza dal picking event[ALL_EVENTS_SERVER + ALL_EVENTS_PICKING]: " + event[ALL_EVENTS_SERVER + ALL_EVENTS_PICKING ].t);
-            */
+            else if((ALL_EVENTS_PICKING + SERVERS_PACKING < e) && (e <= ALL_EVENTS_PACKING + SERVERS_QUALITY)){ //partenza dal quality center e arrivo al shipping center [63, 82] o picking center
+                indexQualityCenter++;
+                numberJobsQualityCenter--;
+                sQualityCenter = e;
+                if (numberJobsQualityCenter > SERVERS_QUALITY) {
+
+                    service = sim.getServiceMultiServer(r,6);
+                    sum[sQualityCenter].service += service;
+                    sum[sQualityCenter].served++;
+                    event[sQualityCenter].t = t.current + service;
+
+                } else { //the queue is empty so make the node idle and eliminate the completion event from consideration
+                    event[sQualityCenter].x = 0;
+                }
+
+                r.selectStream(19);
+                double probPS = r.random();
+                if(probPS <= PICKING_CENTER_PROB){ //arrivo al picking center se condizione verificata
+                    numberJobsPickingCenter++;
+                    if (numberJobsPickingCenter <= SERVERS_PICKING) { // if there is a free server
+                        service         = sim.getServiceMultiServer(r, 4);
+                        sPickingCenter               = sim.findOne(event,PICKING);
+                        sum[sPickingCenter].service += service;
+                        sum[sPickingCenter].served++;
+                        event[sPickingCenter].t      = t.current + service;
+                        event[sPickingCenter].x      = 1;
+                    }
+                }
+                else{ //arrivo allo shipping center
+                    numberJobsShippingCenter++;
+                    double orderType = r.random();
+                    if(orderType <= ORDER_PRIME)
+                        orderType = 1;
+                    else
+                        orderType = 2;
+                    if(numberJobsShippingCenter <= SERVERS_SHIPPING){
+                        service         = sim.getServiceMultiServerPriority(r, 7, orderType);
+                        sShippingCenter               = sim.findOne(event,SHIPPING);
+                        sum[sShippingCenter].service += service;
+                        sum[sShippingCenter].served++;
+                        event[sShippingCenter].t      = t.current + service;
+                        event[sShippingCenter].x      = 1;
+                    }
+                }
+            }
+            else if((e > ALL_EVENTS_PACKING + SERVERS_QUALITY) && (e <= ALL_EVENTS_QUALITY  + SERVERS_SHIPPING )){ //partenza dal shipping center
+                indexShippingCenter++;
+                numberJobsShippingCenter--;
+                sShippingCenter = e;
+                if (numberJobsShippingCenter > SERVERS_SHIPPING) {
+                    double orderType = r.random();
+                    if(orderType <= ORDER_PRIME)
+                        orderType = 1;
+                    else
+                        orderType = 2;
+                    service = sim.getServiceMultiServerPriority(r,7, orderType);
+                    sum[sShippingCenter].service += service;
+                    sum[sShippingCenter].served++;
+                    event[sShippingCenter].t = t.current + service;
+                } else { //the queue is empty so make the node idle and eliminate the completion event from consideration
+                    event[sShippingCenter].x = 0;
+                }
+            }
+            else if( e == EVENT_ABANDONMENT_PICKING){
+                numberJobsPickingCenter--;
+                abandonedPicking++;
+                event[e].t = t.current + sim.getAbandon(PATIENCE, r, 0);
+                abandonmentPicking.add(event[e].t);
+                event[e].x = 1;
+            }
+            else if( e == EVENT_ABANDONMENT_PACKING){
+                //fai la stessa cosa di prima
+                numberJobsPackingCenter--;
+                abandonedPacking++;
+                event[e].t = t.current + sim.getAbandon(PATIENCE, r, 0);
+                abandonmentPacking.add(event[e].t);
+                event[e].x = 1;
+            }
+            else if( e == EVENT_ABANDONMENT_QUALITY){
+                numberJobsQualityCenter--;
+                abandonedQuality++;
+                event[e].t = t.current + sim.getAbandon(PATIENCE, r, 0);
+                abandonmentQuality.add(event[e].t);
+                event[e].x = 1;
+            }
+            else if( e == EVENT_ABANDONMENT_PRIME_QUEUE){
+                numberJobsShippingCenter--;
+                abandonedShippingPrime++;
+                event[e].t = t.current + sim.getAbandon(PATIENCE_ORDER_PRIME, r, 0);
+                abandonmentShippingPrime.add(event[e].t);
+                event[e].x = 1;
+            }
+            else if( e == EVENT_ABANDONMENT_NOT_PRIME_QUEUE){
+                numberJobsShippingCenter--;
+                abandonedShippingNotPrime++;
+                event[e].t = t.current + sim.getAbandon(PATIENCE_ORDER_NOT_PRIME, r, 0);
+                abandonmentShippingNotPrime.add(event[e].t);
+                event[e].x = 1;
+            }
+            if(numberJobsPickingCenter > 0 && numberJobsPickingCenter <= SERVERS_PICKING){
+                event[ALL_EVENTS].x = 1;
+            }
+            else{
+                event[EVENT_ABANDONMENT_PICKING].x = 0;
+            }
+            if(numberJobsPackingCenter > 0 && numberJobsPackingCenter > SERVERS_PACKING ){
+                event[EVENT_ABANDONMENT_PACKING].x = 1;
+            }
+            else{
+                event[EVENT_ABANDONMENT_PACKING].x = 0;
+            }
+            if(numberJobsQualityCenter > 0 && numberJobsQualityCenter > SERVERS_QUALITY){
+                event[EVENT_ABANDONMENT_QUALITY].x = 1;
+            }
+            else{
+                event[EVENT_ABANDONMENT_QUALITY].x = 0;
+            }
+            if(numberJobsShippingCenter > 0 && numberJobsShippingCenter > SERVERS_SHIPPING){
+                event[EVENT_ABANDONMENT_PRIME_QUEUE].x = 1;
+                event[EVENT_ABANDONMENT_NOT_PRIME_QUEUE].x = 1;
+            }
+            else{
+                event[EVENT_ABANDONMENT_PRIME_QUEUE].x = 0;
+                event[EVENT_ABANDONMENT_NOT_PRIME_QUEUE].x = 0;
+            }
 
 
-            for (int i = 0; i <ALL_EVENTS_PICKING + SERVERS_PACKING; i++) {
+           /* for (int i = 0; i <ALL_EVENTS; i++) {
                 System.out.println("event[" + i + "].t: " + event[i].t);
             }
             System.out.println("numero di job nel server: " + numberJobsServerOrder);
             System.out.println("partenze dal server: " + indexServer);
             System.out.println("numberJobsPickingCenter: " + numberJobsPickingCenter);
-            System.out.println("partenze dal picking center: " + indexPickingCenter);
-
+            System.out.println("partenze dal picking center: " + indexPickingCenter);*/
 
         } //end while
+
+        //stampa un separatore
+        System.out.println("----------------------------------------------------");
+
         //stampo i risultati
         System.out.println("numeri di job nel server: " + numberJobsServerOrder);
         System.out.println("partenze dal server: " + indexServer);
@@ -214,15 +373,34 @@ public class Simulator {
         System.out.println("numero di job nel centro di shipping: " + numberJobsShippingCenter);
         System.out.println("partenze dal centro di shipping: " + indexShippingCenter);
         //System.out.println("utilizzazione Server: " + sum[1].service / t.current);
+        //lista di abbandoni
+        System.out.println("numero di abbandoni nel centro di picking: " + abandonedPicking);
+        System.out.println("numero di abbandoni nel centro di packing: " + abandonedPacking);
+        System.out.println("numero di abbandoni nel centro di qualità: " + abandonedQuality);
+        System.out.println("numero di abbandoni nel centro di shipping prime: " + abandonedShippingPrime);
+        System.out.println("numero di abbandoni nel centro di shipping not prime: " + abandonedShippingNotPrime);
+        //anche i tempi di abbandono nelle liste
+        System.out.println("lista di abbandoni nel centro di picking: " + abandonmentPicking);
+        System.out.println("lista di abbandoni nel centro di packing: " + abandonmentPacking);
+        System.out.println("lista di abbandoni nel centro di qualità: " + abandonmentQuality);
+        System.out.println("lista di abbandoni nel centro di shipping prime: " + abandonmentShippingPrime);
+        System.out.println("lista di abbandoni nel centro di shipping not prime: " + abandonmentShippingNotPrime);
 
 
 
         DecimalFormat f = new DecimalFormat("###0.00");
 
-
     } //end main
 
-
+    private double getServiceMultiServerPriority(Rngs r, int i, double orderType) {
+        r.selectStream(20 + i );
+        double m;
+        if (orderType == 1)
+            m = SERVICE_TIME_SHIPPING_PRIME;
+        else
+            m = SERVICE_TIME_SHIPPING;
+        return (-m * Math.log(1.0 - r.random()));
+    }
 
     private double getServiceMultiServer(Rngs r, int streamIndex) {
         r.selectStream(20 + streamIndex );
@@ -230,6 +408,12 @@ public class Simulator {
         switch (streamIndex) {
             case 4:
                 m = SERVICE_TIME_PICKING;
+                break;
+            case 5:
+                m = SERVICE_TIME_PACKING;
+                break;
+            case 6:
+                m = SERVICE_TIME_QUALITY;
                 break;
             default:
                 new Exception("Errore nella selezione dello stream");
@@ -265,7 +449,7 @@ public class Simulator {
 
         e = i;
 
-        while (i < ALL_EVENTS_PICKING + SERVERS_PACKING) {         /* now, check the others to find which  */
+        while (i < ALL_EVENTS - 1) {         /* now, check the others to find which  */
             i++;
             /* event type is most imminent          */
             if ((event[i].x == 1) && (event[i].t < event[e].t))
@@ -275,35 +459,43 @@ public class Simulator {
         return (e);
     }
 
-    int findOne(Event [] event,int center){
+    int findOne(Event [] event, int center){ //center rappresenta il numero di server del centro
         /* -----------------------------------------------------
          * return the index of the available server idle longest
          * -----------------------------------------------------
          */
-        int s, i;
-        switch (center){
-            case PICKING:
-                i = 3;
+        int s;
+        int i = 0, server = 0;
+        switch (center)
+        {
+            case 1: //picking center
+                i = 2;
+                server = SERVERS_PICKING + ALL_EVENTS_SERVER;
                 break;
-            case PACKING:
-                i = 44;
+            case 2: //packing center
+                i = SERVERS_PICKING + ALL_EVENTS_SERVER + 1;
+                server = ALL_EVENTS_PICKING + SERVERS_PACKING;
+                break;
+            case 3: //quality center
+                i = ALL_EVENTS_PICKING + SERVERS_PACKING + 1;
+                server = ALL_EVENTS_PACKING + SERVERS_QUALITY;
+                break;
+            case 4: //shipping center
+                i = ALL_EVENTS_PACKING + SERVERS_QUALITY +1 ;
+                server = ALL_EVENTS -1 - ALL_ABANDON_EVENTS ;
                 break;
             default:
-                i = -1;
-                System.out.println("Errore nella selezione del centro");
+                new Exception("Errore nella selezione del centro");
                 break;
         }
-
-
         while (event[i].x == 1)       /* find the index of the first available */
             i++;                        /* (idle) server                         */
         s = i;
-        while (i < SERVERS_PICKING ) {         /* now, check the others to find which   */
+        while (i < server ) {         /* now, check the others to find which   */
             i++;                        /* has been idle longest                 */
             if ((event[i].x == 0) && (event[i].t < event[s].t))
                 s = i;
         }
-
         return (s);
     }
 
@@ -315,4 +507,11 @@ public class Simulator {
         return (a + (b - a) * r.random());
     }
 
+    double getAbandon(double patience, Rngs r, int streamIndex){
+
+        r.selectStream(1 + streamIndex);
+        //patience = 999999999; //pazienza alta = no abbandoni
+        return (-patience * Math.log(1.0 - r.random())); //abbandoni reali
+
+    }
 }
