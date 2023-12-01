@@ -1,0 +1,88 @@
+
+s
+java:S1450("VRemove the "service" field and declare it as a local variable in the relevant methods.(›ŞĞƒ8ñ÷úİÁ1
+p
+java:S3776,"SRefactor this method to reduce its Cognitive Complexity from 113 to the 15 allowed.(Ÿ°Ô¬8÷÷úİÁ1
+q
+java:S1854O"ORemove this useless assignment to local variable "abandonmentShippingNotPrime".(ı‘ÏÚùÿÿÿÿ8ü÷úİÁ1
+n
+java:S1854N"LRemove this useless assignment to local variable "abandonmentShippingPrime".(áÿå•øÿÿÿÿ8ş÷úİÁ1
+h
+java:S1854M"FRemove this useless assignment to local variable "abandonmentQuality".(€÷¤øÿÿÿÿÿ8€øúİÁ1
+c
+java:S1854L"FRemove this useless assignment to local variable "abandonmentPacking".(ëôà·8øúİÁ1
+h
+java:S1854K"FRemove this useless assignment to local variable "abandonmentPicking".(¿½Èûÿÿÿÿ8ƒøúİÁ1
+S
+java:S1854Ç"5Remove this useless assignment to local variable "f".(¯ÕĞª8…øúİÁ1
+]	java:S125+"<This block of commented-out lines of code should be removed.(¶·±…ÿÿÿÿÿ8‡øúİÁ1
+W
+java:S1481;"5Remove this unused "abandonedPicking" local variable.(Ğ»¸‰ùÿÿÿÿ8ˆøúİÁ1
+Q
+java:S1481<"5Remove this unused "abandonedPacking" local variable.(”½é-8‰øúİÁ1
+R
+java:S1481="5Remove this unused "abandonedQuality" local variable.(óî·˜8‹øúİÁ1
+]
+java:S1481>";Remove this unused "abandonedShippingPrime" local variable.(ğÌŸ¶üÿÿÿÿ8ŒøúİÁ1
+[
+java:S1481?">Remove this unused "abandonedShippingNotPrime" local variable.(¦«ñ´8øúİÁ1
+S
+java:S1481@"6Remove this unused "areaPickingCenter" local variable.(’‡å—8øúİÁ1
+X
+java:S1481A"6Remove this unused "areaPackingCenter" local variable.(¶ßŠ¸ıÿÿÿÿ8øúİÁ1
+S
+java:S1481B"6Remove this unused "areaQualityCenter" local variable.(µÕ¾É8‘øúİÁ1
+_
+java:S1481C"=Remove this unused "areaSortingFragileOrders" local variable.(ı‰Ûáùÿÿÿÿ8“øúİÁ1
+b
+java:S1481D"@Remove this unused "areaSortingNotFragileOrders" local variable.(ºóÔ×ıÿÿÿÿ8”øúİÁ1
+Y
+java:S1481K"7Remove this unused "abandonmentPicking" local variable.(¿½Èûÿÿÿÿ8—øúİÁ1
+T
+java:S1481L"7Remove this unused "abandonmentPacking" local variable.(ëôà·8™øúİÁ1
+Y
+java:S1481M"7Remove this unused "abandonmentQuality" local variable.(€÷¤øÿÿÿÿÿ8›øúİÁ1
+_
+java:S1481N"=Remove this unused "abandonmentShippingPrime" local variable.(áÿå•øÿÿÿÿ8øúİÁ1
+b
+java:S1481O"@Remove this unused "abandonmentShippingNotPrime" local variable.(ı‘ÏÚùÿÿÿÿ8øúİÁ1
+X	java:S125["<This block of commented-out lines of code should be removed.(´º8 øúİÁ1
+U
+java:S1135ô"2Complete the task associated to this TODO comment.(·¸–Îıÿÿÿÿ8¦øúİÁ1
+V	java:S106¹"9Replace this use of System.out or System.err by a logger.(Ó—’İ8ªøúİÁ1
+V	java:S106»"9Replace this use of System.out or System.err by a logger.(›ï´ë8«øúİÁ1
+V	java:S106¼"9Replace this use of System.out or System.err by a logger.(ñÚ¯ß8­øúİÁ1
+[	java:S106½"9Replace this use of System.out or System.err by a logger.(ù½Ğ“ıÿÿÿÿ8®øúİÁ1
+[	java:S106¾"9Replace this use of System.out or System.err by a logger.(´‘€Ãıÿÿÿÿ8°øúİÁ1
+V	java:S106¿"9Replace this use of System.out or System.err by a logger.(Ñ•å†8±øúİÁ1
+[	java:S106À"9Replace this use of System.out or System.err by a logger.(“Ó™ÿÿÿÿÿ8³øúİÁ1
+[	java:S106Á"9Replace this use of System.out or System.err by a logger.(¾ÉôÉûÿÿÿÿ8µøúİÁ1
+V	java:S106Â"9Replace this use of System.out or System.err by a logger.(–œ™Å8·øúİÁ1
+U	java:S106Ã"9Replace this use of System.out or System.err by a logger.(àß€g8¹øúİÁ1
+V	java:S106Ä"9Replace this use of System.out or System.err by a logger.(¶„„ã8»øúİÁ1
+D
+java:S1481Ç"&Remove this unused "f" local variable.(¯ÕĞª8¾øúİÁ1
+[	java:S106É"9Replace this use of System.out or System.err by a logger.(ÆÇâÈıÿÿÿÿ8ÀøúİÁ1
+[	java:S106Ì"9Replace this use of System.out or System.err by a logger.(¶®»çşÿÿÿÿ8ÂøúİÁ1
+[	java:S106Í"9Replace this use of System.out or System.err by a logger.(©¶§Úûÿÿÿÿ8ÃøúİÁ1
+V	java:S106Î"9Replace this use of System.out or System.err by a logger.(ÜıÆü8ÅøúİÁ1
+[	java:S106Ï"9Replace this use of System.out or System.err by a logger.(ô²ˆûÿÿÿÿ8ÅøúİÁ1
+[	java:S106Ğ"9Replace this use of System.out or System.err by a logger.(Àœ–Öşÿÿÿÿ8ÅøúİÁ1
+V	java:S106Ñ"9Replace this use of System.out or System.err by a logger.(­§²ñ8ÅøúİÁ1
+[	java:S106Ò"9Replace this use of System.out or System.err by a logger.(¾ÉôÉûÿÿÿÿ8ÅøúİÁ1
+V	java:S106Ó"9Replace this use of System.out or System.err by a logger.(–œ™Å8ÆøúİÁ1
+U	java:S106Ô"9Replace this use of System.out or System.err by a logger.(àß€g8ÆøúİÁ1
+V	java:S106Õ"9Replace this use of System.out or System.err by a logger.(¶„„ã8ÆøúİÁ1
+T
+java:S3984ù"6Throw this exception or remove this useless statement.(íòñ†8ÉøúİÁ1
+^	java:S125ˆ"<This block of commented-out lines of code should be removed.(äÀëÉøÿÿÿÿ8ËøúİÁ1
+B
+java:S1659¨"$Declare "server" on a separate line.(ã±ìÔ8ÑøúİÁ1
+Y
+java:S3984À"6Throw this exception or remove this useless statement.(õ–›ìıÿÿÿÿ8ÓøúİÁ1
+?
+java:S1128""Remove this unused import 'utils'.(ë½ïÖ8ÖøúİÁ1
+`
+java:S1144Û"BRemove this unused private "getServiceMultiServerPriority" method.(Ø††¹8×øúİÁ1
+ä
+java:S6541,"ÆA "Brain Method" was detected. Refactor it to reduce at least one of the following metrics: LOC from 271 to 64, Complexity from 44 to 14, Nesting Level from 5 to 2, Number of Variables from 43 to 6.(Ÿ°Ô¬8ÙøúİÁ1

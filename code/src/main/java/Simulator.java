@@ -77,6 +77,10 @@ public class Simulator {
         List<Double> abandonmentQuality = new ArrayList<>();
         List<Double> abandonmentShippingPrime = new ArrayList<>();
         List<Double> abandonmentShippingNotPrime = new ArrayList<>();
+        long numberFeedbackIsTrue = 0;
+        long numberFragileQuality =0;
+        long numberNotFragileQuality =0;
+
 
         Simulator sim = new Simulator();
         Rngs r = new Rngs();
@@ -116,10 +120,13 @@ public class Simulator {
 
             if (e == EVENT_ARRIVAL_PICKING) { //arrivo al picking center
                 numberJobsPickingCenter++;
+
                 if(feedback == 0)
                     event[0].t = sim.getArrival(r, 1);
-                else
+                else{
                     feedback = 0;
+                    numberFeedbackIsTrue++;
+                }
 
                 if (event[0].t > STOP)
                     event[0].x = 0; //close the door
@@ -206,6 +213,10 @@ public class Simulator {
             else if( e == EVENT_ARRIVAL_FRAGILE_QUALITY || e == EVENT_ARRIVAL_NOT_FRAGILE_QUALITY){ //arrivo al quality center
                 event[e].x = 0;
                 numberJobsQualityCenter++;
+                if(e == EVENT_ARRIVAL_FRAGILE_QUALITY)
+                    numberFragileQuality++;
+                else
+                    numberNotFragileQuality++;
                 if (numberJobsQualityCenter <= SERVERS_QUALITY){
                     service = sim.getServiceMultiServer(r, 5,QUALITY);
                     sQualityCenter = sim.findOne(event, QUALITY);
@@ -339,7 +350,7 @@ public class Simulator {
         System.out.println("partenze nel centro di smistamento ordini fragili: " + indexSortingFragileOrders);
         System.out.println("numero di job nel centro di smistamento ordini NON fragili: " + numberJobsSortingNotFragileCenter);
         System.out.println("partenze nel centro di smistamento ordini NON fragili: " + indexSortingNotFragileOrders);
-
+        System.out.println("numeri di job non passati: " +numberFeedbackIsTrue);
 
 
     } //end main
