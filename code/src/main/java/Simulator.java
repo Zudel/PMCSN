@@ -56,11 +56,6 @@ public class Simulator {
         int    sSortingFragileOrders;
         int    sSortingNotFragileOrders;
 
-        int abandonedPicking = 0;                   /* number of abandoned jobs                       */
-        int abandonedPacking = 0;
-        int abandonedQuality = 0;
-        int abandonedShippingPrime = 0;
-        int abandonedShippingNotPrime = 0;
         double areaPickingCenter   = 0.0;           /* time integrated number in the node */
         double areaPackingCenter   = 0.0;           /* time integrated number in the node */
         double areaQualityCenter   = 0.0;           /* time integrated number in the node */
@@ -72,15 +67,19 @@ public class Simulator {
         long indexQualityCenter   = 0;             /* used to count departed jobs         */
         long indexSortingFragileOrders   = 0;             /* used to count departed jobs         */
         long indexSortingNotFragileOrders   = 0;             /* used to count departed jobs         */
-        List<Double> abandonmentPicking = new ArrayList<>();
-        List<Double> abandonmentPacking = new ArrayList<>();
-        List<Double> abandonmentQuality = new ArrayList<>();
-        List<Double> abandonmentShippingPrime = new ArrayList<>();
-        List<Double> abandonmentShippingNotPrime = new ArrayList<>();
-        long numberFeedbackIsTrue = 0;
+        long numberFeedbackIsTrue = 0;                 /*numero di job che non passano il test nel qualty control*/
         long numberFragileQuality =0;
         long numberNotFragileQuality =0;
-
+        long indexQualityQueueFragile = 0;
+        long indexQualityQueueNotFragile = 0;
+        long numberPrimeJobsSortingFragileCenter = 0;
+        long numberNotPrimeJobsSortingFragileCenter =0;
+        long numberPrimeJobsSortingNotFragileCenter =0;
+        long numberNotPrimeJobsSortingNotFragileCenter =0;
+        long indexSortingFragilePrimeOrders =0;
+        long indexSortingFragileNotPrimeOrders = 0;
+        long indexSortingNotFragilePrimeOrders=0;
+        long indexSortingNotFragileNotPrimeOrders=0;
 
         Simulator sim = new Simulator();
         Rngs r = new Rngs();
@@ -252,10 +251,19 @@ public class Simulator {
                     }
 
                 }
-                //todo: generare un tempo di servizio per vedere se è sopra o sotto la media e instradare nella coda opportuna
                 sQualityCenter = e;
                 if (numberJobsQualityCenter > SERVERS_QUALITY) {
                     service = sim.getServiceMultiServer(r, 5, QUALITY);
+
+                    if(service <= SERVICE_TIME_QUALITY) {    /*size-based*/
+                        numberFragileQuality--;
+                        indexQualityQueueFragile++;
+                    }
+                    else{
+                        numberNotFragileQuality--;
+                        indexQualityQueueNotFragile++;
+                    }
+
                     sum[sQualityCenter].service += service;
                     sum[sQualityCenter].served++;
                     event[sQualityCenter].t = t.current + service;
@@ -267,6 +275,12 @@ public class Simulator {
             else if(e == EVENT_ARRIVAL_SORTING_FRAGILE_PRIME_ORDERS || e == EVENT_ARRIVAL_SORTING_FRAGILE_NOT_PRIME_ORDERS){ //arrivi al centro smistamento ordini fragili
                 numberJobsSortingFragileCenter++;
                 event[e].x =0;
+
+                if(e ==  EVENT_ARRIVAL_SORTING_FRAGILE_PRIME_ORDERS)
+                    numberPrimeJobsSortingFragileCenter++;
+                else
+                    numberNotPrimeJobsSortingFragileCenter++;
+
                 if (numberJobsSortingFragileCenter <= SERVERS_SORTING_FRAGILE_ORDERS) {
                     service = sim.getServiceMultiServer(r, 5, SORTING_FRAGILE_ORDERS);
                     sSortingFragileOrders = sim.findOne(event, SORTING_FRAGILE_ORDERS);
@@ -279,6 +293,15 @@ public class Simulator {
             else if ((e > EVENT_ARRIVAL_SORTING_FRAGILE_NOT_PRIME_ORDERS) && ( e <= EVENT_DEPARTURE_SORTING_FRAGILE_ORDERS)){ //partenze dal centro smistamento ordini fragili
                 indexSortingFragileOrders++;
                 numberJobsSortingFragileCenter--;
+                if( numberPrimeJobsSortingFragileCenter > 0) {
+                    indexSortingFragilePrimeOrders++;
+                    numberPrimeJobsSortingFragileCenter--;
+                }
+                else {
+                    indexSortingFragileNotPrimeOrders++;
+                    numberNotPrimeJobsSortingFragileCenter--;
+                }
+
                 sSortingFragileOrders = e;
                 if(numberJobsSortingFragileCenter > SERVERS_SORTING_FRAGILE_ORDERS){
                     service = sim.getServiceMultiServer(r, 5, SORTING_FRAGILE_ORDERS);
@@ -295,6 +318,11 @@ public class Simulator {
             else if( e == EVENT_ARRIVAL_SORTING_NOT_FRAGILE_PRIME_ORDERS || e == EVENT_ARRIVAL_SORTING_NOT_FRAGILE_NOT_PRIME_ORDERS){ //arrivi al centro di smistamento ordini resistenti
                 numberJobsSortingNotFragileCenter++;
                 event[e].x = 0;
+                if(e == EVENT_ARRIVAL_SORTING_NOT_FRAGILE_PRIME_ORDERS)
+                    numberPrimeJobsSortingNotFragileCenter++;
+                else
+                    numberNotPrimeJobsSortingNotFragileCenter++;
+
                 if(numberJobsSortingNotFragileCenter <= SERVERS_SORTING_NOT_FRAGILE_ORDERS){
                     service = sim.getServiceMultiServer(r, 5, SORTING_NOT_FRAGILE_ORDERS);
                     sSortingNotFragileOrders = sim.findOne(event, SORTING_NOT_FRAGILE_ORDERS);
@@ -308,6 +336,14 @@ public class Simulator {
             else if((e > EVENT_ARRIVAL_SORTING_NOT_FRAGILE_NOT_PRIME_ORDERS) && ( e <= EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS)){ //partenze dal centro di smistamento ordini resistenti
                 indexSortingNotFragileOrders++;
                 numberJobsSortingNotFragileCenter--;
+                if( numberPrimeJobsSortingNotFragileCenter> 0){
+                    numberPrimeJobsSortingNotFragileCenter--;
+                    indexSortingNotFragilePrimeOrders++;
+                }
+                else {
+                    numberNotPrimeJobsSortingNotFragileCenter--;
+                    indexSortingNotFragileNotPrimeOrders++;
+                }
                 sSortingNotFragileOrders = e;
                 if (numberJobsSortingNotFragileCenter > SERVERS_SORTING_NOT_FRAGILE_ORDERS) {
                     service = sim.getServiceMultiServer(r, 5, SORTING_NOT_FRAGILE_ORDERS);
@@ -320,7 +356,7 @@ public class Simulator {
                     event[sSortingNotFragileOrders].x = 0; //se non ci sono più job nel picking center, setto l'evento di partenza a zero
             }
 
-           for (int i = 0; i < 102; i++) {
+           /*for (int i = 0; i < 102; i++) {
                 System.out.println("event[" + i + "].t: " + event[i].t);
             }
             System.out.println("numberJobsPickingCenter: " + numberJobsPickingCenter);
@@ -332,11 +368,11 @@ public class Simulator {
             System.out.println("numero di job nel centro di smistamento ordini fragili: " + numberJobsSortingFragileCenter);
             System.out.println("partenze nel centro di smistamento ordini fragili: " + indexSortingFragileOrders);
             System.out.println("numero di job nel centro di smistamento ordini NON fragili: " + numberJobsSortingNotFragileCenter);
-            System.out.println("partenze nel centro di smistamento ordini NON fragili: " + indexSortingNotFragileOrders);
+            System.out.println("partenze nel centro di smistamento ordini NON fragili: " + indexSortingNotFragileOrders);*/
 
         } //end while
         DecimalFormat f = new DecimalFormat("###0.00");
-        //stampa un separatore
+
         System.out.println("----------------------------------------------------");
 
         //stampo i risultati
@@ -346,11 +382,27 @@ public class Simulator {
         System.out.println("partenze dal centro di packing: " + indexPackingCenter);
         System.out.println("numero di job nel centro di qualità: " + numberJobsQualityCenter);
         System.out.println("partenze dal centro di qualità: " + indexQualityCenter);
+        System.out.println("partenze di tipo fragili dal centro di qualità: " + indexQualityQueueFragile);
+        System.out.println("partenze di tipo resistenti dal centro di qualità: " + indexQualityQueueNotFragile);
         System.out.println("numero di job nel centro di smistamento ordini fragili: " + numberJobsSortingFragileCenter);
         System.out.println("partenze nel centro di smistamento ordini fragili: " + indexSortingFragileOrders);
+        System.out.println("partenze di tipo PRIME nel centro di smistamento ordini fragili: " + indexSortingFragilePrimeOrders);
+        System.out.println("partenze di tipo NON PRIME nel centro di smistamento ordini fragili: " + indexSortingFragileNotPrimeOrders);
         System.out.println("numero di job nel centro di smistamento ordini NON fragili: " + numberJobsSortingNotFragileCenter);
         System.out.println("partenze nel centro di smistamento ordini NON fragili: " + indexSortingNotFragileOrders);
+        System.out.println("partenze di tipo PRIME nel centro di smistamento ordini NON fragili: " + indexSortingNotFragilePrimeOrders);
+        System.out.println("partenze di tipo NON PRIME nel centro di smistamento ordini NON fragili: " + indexSortingNotFragileNotPrimeOrders);
         System.out.println("numeri di job non passati: " +numberFeedbackIsTrue);
+
+        System.out.println("----------------------------------------------------");
+
+        System.out.println("\nfor " + index + " jobs the service node PICKING's statistics are:\n");
+        System.out.println("  avg interarrivals .. =   " + f.format(event[0].t / index));
+        System.out.println("  avg wait ........... =   " + f.format(area / index));
+        System.out.println("  avg # in node ...... =   " + f.format(area / t.current));
+
+        for (s = 1; s <= SERVERS; s++)          /* adjust area to calculate */
+            area -= sum[s].service;              /* averages for the queue   */
 
 
     } //end main
