@@ -6,7 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="73dcb141-e879-4a17-87af-80d7f7942b65" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/code/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/Simulator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/model/Ssq3.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/model/Ssq3Area.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ultimo_fullcenter_draw.drawio" beforeDir="false" afterPath="$PROJECT_DIR$/ultimo_fullcenter_draw.drawio" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,6 +38,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
     "Downloaded.Files.Path.Enabled": "true",
     "Repository.Attach.Annotations": "false",
     "Repository.Attach.JavaDocs": "false",
@@ -49,7 +55,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Libraries",
+    "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "preferences.pluginManager",
@@ -59,6 +65,9 @@
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Roberto\Documents\GitHub\PMCSN\code\src\main" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
     </key>
   </component>
   <component name="RunManager" selected="Application.Simulator">
@@ -87,7 +96,7 @@
       <module name="code" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="model.*" />
+          <option name="PATTERN" value=".*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -95,9 +104,17 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="calcoli" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="calcoli" />
+      <module name="code" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Simulator" />
+        <item itemvalue="Application.calcoli" />
         <item itemvalue="Application.Ssq3" />
         <item itemvalue="Application.Rngs" />
       </list>
@@ -155,7 +172,13 @@
       <workItem from="1701680259343" duration="4000" />
       <workItem from="1701680470833" duration="1099000" />
       <workItem from="1701697389668" duration="5928000" />
-      <workItem from="1701782286182" duration="8275000" />
+      <workItem from="1701782286182" duration="10185000" />
+      <workItem from="1701852106321" duration="5189000" />
+      <workItem from="1702288122758" duration="1163000" />
+      <workItem from="1702304880034" duration="7655000" />
+      <workItem from="1702324757268" duration="2387000" />
+      <workItem from="1702377195610" duration="2014000" />
+      <workItem from="1702387982929" duration="5900000" />
     </task>
     <servers />
   </component>
