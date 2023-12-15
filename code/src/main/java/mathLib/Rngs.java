@@ -62,10 +62,9 @@ public class Rngs {
   int  stream        = 0;          /* stream index, 0 is the default */
   int  initialized   = 0;          /* test for stream initialization */
   /* Barry Lawson 8 Nov 2007 */
-  
+
 
   public static void main(String[] args) {
-      
     Rngs r = new Rngs();
     r.testRandom();
   }
@@ -129,7 +128,7 @@ public class Rngs {
         seed[j] = x + MODULUS;
     }
   }
-  
+
     public void putSeed(long x) {
 /* ---------------------------------------------------------------
  * Use this function to set the state of the current random number
@@ -193,6 +192,7 @@ public class Rngs {
  * Use this (optional) function to test for a correct implementation.
  * ------------------------------------------------------------------
  */
+
   public void testRandom() {
     long   i;
     long   x;

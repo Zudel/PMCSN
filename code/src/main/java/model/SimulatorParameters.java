@@ -3,7 +3,7 @@ package model;
 public class SimulatorParameters {
 
     public static final double START   = 0.0;            /* initial (open the door)        */
-    public static final double STOP    = 20800;        /* terminal (close the door) time */ //dalle 7 alle 24 in sec 61200.0; 55800 tolte 3 fasce //80000 orizzionte infinito
+    public static final double STOP    = 32400;        /* terminal (close the door) time */ //dalle 10 alle 193240 in sec 32.400;
     public static final double STOP_BATCH    = 10958; /* close the door batch*/
     public static final double TOTAL_ARRIVAL_TO_SERVER    = 12145; /* close the door batch*/
 
@@ -11,6 +11,7 @@ public class SimulatorParameters {
     public static final double QUALITY_CENTER_PROB = 0.34;
     public static final double PICKING_CENTER_PROB = 0.05;
     public static final double ORDER_PRIME = 0.62;
+    public static final double SORTING_FRAGILE_CENTER = 0.5;
 
     //SERVERS
     public static final int    SERVERS_PICKING = 35;              /* number of servers        60-70-80      ARE DEPARTURES*/
@@ -43,7 +44,7 @@ public class SimulatorParameters {
     //service time
     public static final double SERVICE_TIME_PICKING = 8;
     public static final double SERVICE_TIME_PACKING = 14;
-    public static final double SERVICE_TIME_QUALITY = 150;//0.0066666
+    public static final double SERVICE_TIME_QUALITY = 151;//0.0066666
     public static final double SERVICE_TIME_SORTING_FRAGILE_ORDERS = 50; //0.02
     public static final double SERVICE_TIME_SORTING_NOT_FRAGILE_ORDERS = 50;
 
