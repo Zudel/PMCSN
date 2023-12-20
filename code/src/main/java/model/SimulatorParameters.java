@@ -3,9 +3,7 @@ package model;
 public class SimulatorParameters {
 
     public static final double START   = 0.0;            /* initial (open the door)        */
-    public static final double STOP    = 32400;        /* terminal (close the door) time */ //dalle 10 alle 193240 in sec 32.400;
-    public static final double STOP_BATCH    = 10958; /* close the door batch*/
-    public static final double TOTAL_ARRIVAL_TO_SERVER    = 12145; /* close the door batch*/
+    public static final double STOP_BATCH    = 131072; /* close the door batch*/
 
     //probabilities
     public static final double QUALITY_CENTER_PROB = 0.34;

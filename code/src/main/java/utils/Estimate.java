@@ -26,7 +26,7 @@ public class Estimate{
     static final double LOC = 0.95;    /* level of confidence,        */ 
                                        /* use 0.95 for 95% confidence */
 
-    public static void main(String[] args)
+    public void main(double[] array)
     {
 	long   n    = 0;                     /* counts data points */
 	double sum  = 0.0;
@@ -36,36 +36,20 @@ public class Estimate{
 	double u, t, w;
 	double diff;
 	
-	String line = "";
-	
 	Rvms rvms = new Rvms();
+
+		for (int i = 0; i < array.length; i++) { /* use Welford's one-pass method */
+			data = array[i];
+
+			n++; /* and standard deviation */
+			diff = data - mean;
+			sum += diff * diff * (n - 1.0) / n;
+			mean += diff / n;
+		}
+
+		stdev  = Math.sqrt(sum / n);
 	
-	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	try{
-	    line = br.readLine();
-	    
-	    while (line!=null) {         /* use Welford's one-pass method */
-		StringTokenizer tokenizer = new StringTokenizer(line);
-		if(tokenizer.hasMoreTokens()){
-		    data = Double.parseDouble(tokenizer.nextToken());
-		    
-		    n++;                 /* and standard deviation        */
-		    diff  = data - mean;
-		    sum  += diff * diff * (n - 1.0) / n;
-		    mean += diff / n;
-		}  
-		
-		line = br.readLine();
-		
-	    }
-	}catch(IOException e){
-	    System.err.println(e);
-	    System.exit(1);
-	}
-	
-	stdev  = Math.sqrt(sum / n);
-	
-	DecimalFormat df = new DecimalFormat("###0.00");
+	DecimalFormat df = new DecimalFormat("###0.00000");
 	
 	if (n > 1) {
 	    u = 1.0 - 0.5 * (1.0 - LOC);              /* interval parameter  */
