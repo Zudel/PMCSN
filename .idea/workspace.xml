@@ -7,6 +7,7 @@
     <list default="true" id="73dcb141-e879-4a17-87af-80d7f7942b65" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/Simulator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/SteadyStateSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/SteadyStateSimulation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/plotter.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/plotter.java" afterDir="false" />
     </list>
@@ -202,7 +203,8 @@
       <workItem from="1703096040338" duration="1090000" />
       <workItem from="1703155526440" duration="4044000" />
       <workItem from="1703164979745" duration="10263000" />
-      <workItem from="1703233868236" duration="8147000" />
+      <workItem from="1703233868236" duration="8962000" />
+      <workItem from="1703253079706" duration="7917000" />
     </task>
     <servers />
   </component>

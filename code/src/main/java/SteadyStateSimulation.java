@@ -4,7 +4,7 @@ public class SteadyStateSimulation {
     private static Simulator sim;
     private static int batchSize=1024;
     private static   int k=128;
-    private int i; //to count the number of jobs of batches at runtime
+    private int streamIndex; //per le repliche
     private static int flag=0;
 
     /**

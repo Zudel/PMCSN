@@ -14,9 +14,9 @@ public class SimulatorParameters {
     //SERVERS
     public static final int    SERVERS_PICKING = 35;              /* number of servers        60-70-80      ARE DEPARTURES*/
     public static final int   SERVERS_PACKING = 30;              /* number of servers        20-30-40      */
-    public static final int    SERVERS_QUALITY = 25;
-    public static final int    SERVERS_SORTING_FRAGILE_ORDERS = 200;
-    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS = 200;
+    public static final int    SERVERS_QUALITY = 70;
+    public static final int    SERVERS_SORTING_FRAGILE_ORDERS = 150;
+    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS = 150;
 
     //events
     public static final int EVENT_ARRIVAL_PICKING = 0;
@@ -42,9 +42,9 @@ public class SimulatorParameters {
     //service time
     public static final double SERVICE_TIME_PICKING = 8;
     public static final double SERVICE_TIME_PACKING = 14;
-    public static final double SERVICE_TIME_QUALITY = 15;//0.0066666
-    public static final double SERVICE_TIME_SORTING_FRAGILE_ORDERS = 2; //0.02
-    public static final double SERVICE_TIME_SORTING_NOT_FRAGILE_ORDERS = 2;
+    public static final double SERVICE_TIME_QUALITY = 151;//0.0066666
+    public static final double SERVICE_TIME_SORTING_FRAGILE_ORDERS = 50; //0.02
+    public static final double SERVICE_TIME_SORTING_NOT_FRAGILE_ORDERS = 50;
 
 
 
