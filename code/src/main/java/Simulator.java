@@ -2,7 +2,9 @@ import mathLib.Rngs;
 import mathLib.Rvms;
 import mathLib.Uvs;
 import utils.Estimate;
+import utils.plotter;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import static model.SimulatorParameters.*;
@@ -360,7 +362,7 @@ public class Simulator {
                     random = r.random();
 
                     if (random <= SORTING_FRAGILE_CENTER) {  //qui decido se andare al sorting center fragile o not fragile (se la condizione è verficata vado al fragile)
-                        numberJobsSortingFragileCenter++;
+                        //numberJobsSortingFragileCenter++;
                         random = r.random();
                         if (random <= ORDER_PRIME) { //qui decido in quale coda del sorting center fragile andare (prime o not prime)
                             event[EVENT_ARRIVAL_SORTING_FRAGILE_PRIME_ORDERS].x = 1;
@@ -376,7 +378,7 @@ public class Simulator {
                     }
                     else {
                         random = r.random();
-                        numberJobsSortingNotFragileCenter++;
+                        //numberJobsSortingNotFragileCenter++;
                         if (random <= ORDER_PRIME) { //qui decido in quale coda del sorting center NON fragile andare (prime o not prime)
                             event[EVENT_ARRIVAL_SORTING_NOT_FRAGILE_PRIME_ORDERS].x = 1;
                             event[EVENT_ARRIVAL_SORTING_NOT_FRAGILE_PRIME_ORDERS].t = event[sQualityCenter].t;
@@ -410,7 +412,7 @@ public class Simulator {
                     indexSortingFragilePrimeOrders++;
                     numberPrimeJobsSortingFragileCenter--;
                 }
-                else if(numberNotPrimeJobsSortingFragileCenter > 0){
+                else {
                     indexSortingFragileNotPrimeOrders++;
                     numberNotPrimeJobsSortingFragileCenter--;
                 }
@@ -447,7 +449,7 @@ public class Simulator {
                     numberPrimeJobsSortingNotFragileCenter--;
                     indexSortingNotFragilePrimeOrders++;
                 }
-                else if(numberNotPrimeJobsSortingNotFragileCenter > 0){
+                else {
                     numberNotPrimeJobsSortingNotFragileCenter--;
                     indexSortingNotFragileNotPrimeOrders++;
                 }
@@ -462,11 +464,7 @@ public class Simulator {
                 else
                     event[sSortingNotFragileOrders].x = 0; //se non ci sono più job nel picking center, setto l'evento di partenza a zero
             }
-
-           /*for (int i = 0; i < EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS + 1; i++) {
-                System.out.println("event[" + i + "].t: " + event[i].t);
-            }
-            System.out.println("numberJobsPickingCenter: " + numberJobsPickingCenter);
+            /*System.out.println("numberJobsPickingCenter: " + numberJobsPickingCenter);
             System.out.println("partenze dal picking center: " + indexPickingCenter);
             System.out.println("numberJobsPackingCenter: " + numberJobsPackingCenter);
             System.out.println("partenze dal packing center: " + indexPackingCenter);
@@ -587,7 +585,13 @@ public class Simulator {
             estimate.main(numberWaitingTimerecords[j]);
         }*/
 
-
+        SwingUtilities.invokeLater(() -> {
+            plotter example = new plotter("Grafico",responseTimerecords, this.k, this.batchSize );
+            example.setSize(800, 600);
+            example.setLocationRelativeTo(null);
+            example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            example.setVisible(true);
+        });
 
         //stampo i risultati
         System.out.println("numero di job nel centro di picking: " + numberJobsPickingCenter);
@@ -608,7 +612,7 @@ public class Simulator {
 
         System.out.println("----------------------------------------------------");
         //nel nodo
-        System.out.println("TEMPI E QUANTITA NEL NODO");
+        /*System.out.println("TEMPI E QUANTITA NEL NODO");
         System.out.println("\nfor " + indexPickingCenter + " jobs the service node PICKING's statistics are:\n");
         System.out.println("  avg interarrivals .. =   " + f.format(event[0].t / indexPickingCenter)); //E(interrarrivo)
         System.out.println("  avg wait (E(TS)) ... =   " + f.format(areaPickingCenter / indexPickingCenter));  //E(Ts)
@@ -740,7 +744,7 @@ public class Simulator {
             i++;                        /* element in the event list            */
 
         e = i;
-        while (i < 130) {         /* now, check the others to find which  */
+        while (i < EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS ) {         /* now, check the others to find which  */
             i++;
             /* event type is most imminent          */
             if ((event[i].x == 1) && (event[i].t <= event[e].t))

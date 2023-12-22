@@ -11,19 +11,19 @@ import javax.swing.*;
 
 public class plotter extends JFrame {
 
-    public plotter(String title) {
+    public plotter(String title, double[][] data, int k, int b) {
         super(title);
 
         XYSeries series = new XYSeries("Funzione");
-        for (int x = 0; x <= 200; x++) {
-            series.add(x, Math.pow(x, 2)); // Inserire qui la propria funzione
+        for (int j=0; j < k ; j++) {
+                series.add(j*256, data[3][j]); // Inserire qui la propria funzione
         }
 
         XYSeriesCollection dataset = new XYSeriesCollection(series);
         JFreeChart chart = ChartFactory.createXYLineChart(
-                "Grafico di una Funzione Quadratica", // Titolo del grafico
-                "X", // Etichetta asse X
-                "Y", // Etichetta asse Y
+                "xd", // Titolo del grafico
+                "numero di job", // Etichetta asse X
+                "Ytempo di riposta", // Etichetta asse Y
                 dataset, // Dati
                 PlotOrientation.VERTICAL,
                 true, // Mostra la legenda
@@ -36,13 +36,13 @@ public class plotter extends JFrame {
         setContentPane(chartPanel);
     }
 
-    public static void main(String[] args) {
+    /*public  void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            plotter example = new plotter("Grafico di una Funzione Quadratica");
+            plotter example = new plotter("Grafico", );
             example.setSize(800, 600);
             example.setLocationRelativeTo(null);
             example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             example.setVisible(true);
         });
-    }
+    }*/
 }
