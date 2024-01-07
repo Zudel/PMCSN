@@ -1,16 +1,14 @@
 package model;
 
 public class SimulatorParameters {
-
+    public static final double ARRIVAL   = 2.0;      //una richiesta ogni 2 sec (qui va l'inverso) (ARRIVAL è lambda)
     public static final double START   = 0.0;            /* initial (open the door)        */
     public static final double STOP_BATCH    = 131072; /* close the door batch*/
 
     //probabilities
-    public static final double QUALITY_CENTER_PROB = 0.34;
-    public static final double PICKING_CENTER_PROB = 0.05;
+    public static final double QUALITY_CENTER_PROB = 0.33;
     public static final double ORDER_PRIME = 0.62;
     public static final double SORTING_FRAGILE_CENTER = 0.5;
-
     //SERVERS
     public static final int    SERVERS_PICKING = 35;              /* number of servers        60-70-80      ARE DEPARTURES*/
     public static final int   SERVERS_PACKING = 30;              /* number of servers        20-30-40      */
@@ -42,10 +40,14 @@ public class SimulatorParameters {
     //service time
     public static final double SERVICE_TIME_PICKING = 8;
     public static final double SERVICE_TIME_PACKING = 14;
-    public static final double SERVICE_TIME_QUALITY = 151;//0.0066666
+    public static final double SERVICE_TIME_QUALITY = 150;//0.0066666
     public static final double SERVICE_TIME_SORTING_FRAGILE_ORDERS = 50; //0.02
     public static final double SERVICE_TIME_SORTING_NOT_FRAGILE_ORDERS = 50;
-
-
+    public static final double STD_SERVICE_TIME_PICKING = 0.00886;
+    public static final double STD_SERVICE_TIME_PACKING = 0.00932;
+    public static final double STD_SERVICE_TIME_QUALITY = 0.25384;
+    public static final double STD_SERVICE_SORTING_FRAGILE_ORDERS= 0.04292;
+    public static final double STD_SERVICE_SORTING_NOT_FRAGILE_ORDERS = 0.13124;
+    public static final double BERNOULLI_PROB_SUCCESS=  (double) (SERVERS_QUALITY  + SERVERS_SORTING_FRAGILE_ORDERS + SERVERS_SORTING_NOT_FRAGILE_ORDERS) /(SERVERS_PICKING + SERVERS_PACKING + SERVERS_QUALITY  + SERVERS_SORTING_FRAGILE_ORDERS + SERVERS_SORTING_NOT_FRAGILE_ORDERS);
 
 }

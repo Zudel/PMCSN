@@ -1,12 +1,14 @@
 import mathLib.Rngs;
 import mathLib.Rvms;
 import mathLib.Uvs;
+import org.jfree.data.function.NormalDistributionFunction2D;
 import utils.Estimate;
 import utils.plotter;
 
 import javax.swing.*;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import org.apache.commons.statistics.distribution.TruncatedNormalDistribution;
 import static model.SimulatorParameters.*;
 class Event {                     /* the next-event list    */
     double t;                         /*   next event time      */
@@ -68,7 +70,11 @@ public class Simulator {
     private static double[][] numberResponseTimerecords;
     private static double[][] numberWaitingTimerecords;
     private static double[][] utilizationRecords;
+    private static double[]arrivalsCounter;
     private static double[][] arrivals;
+    private double[] totalResponseTime;
+    private double goBackProb;
+    private double[] goBackProbRecord;
 
 
     //static List<FasciaOraria> listaFasciaOraria = utils.LeggiCSV("C:\\Users\\Roberto\\Documents\\GitHub\\PMCSN\\code\\src\\main\\resources\\distribuzioneOrdiniGiornalieri.csv");
@@ -86,16 +92,23 @@ public class Simulator {
         numberWaitingTimerecords = new double[7][k];
         utilizationRecords = new double[5][k];
         arrivals = new double[5][k];
+        arrivalsCounter = new double[k];
         responseTimeCounter = new double[5]; //sono i contatori per ogni batch
         waitingTimerCounter = new double[7];
         numberResponseTimeCounter = new double[5];
         numberWaitingTimeCounter = new double[7];
         utilizationCounter = new double[5];
+        totalResponseTime = new double[k];
+        goBackProbRecord = new double[k];
+
     }
 
 
     public void main() throws IOException { //start point of the program execution
-        double arrivo = 0.0;
+        double arrivoPacking = 0.0;
+        double arrivoQualityControl = 0.0;
+        double arrivoFragile =0.0;
+        double arrivoResistent =0.0;
         int numberJobsPickingCenter = 0;
         int numberJobsPackingCenter = 0;
         int numberJobsQualityCenter = 0;
@@ -150,6 +163,8 @@ public class Simulator {
         Estimate estimate = new Estimate();
         plotter[] grafico = new plotter[5];
         String[]  centerNames = new String[]{"picking", "packing", "quality", "resistent order", "fragile order"};
+        String[]  centerNamesQueue = new String[]{"picking queue", "packing queue", "quality queue", "resistent order Prime queue", "resistent order Not Prime queue", "fragile order Prime queue","fragile order not Prime queue" };
+
         T t = new T();
         Event[] event = new Event[EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS+1]; //considera che parte da zero! quindi è indicizzabile fino a dim -1!!!
         Sum[] sum = new Sum[EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS+1];
@@ -197,17 +212,20 @@ public class Simulator {
             areaSortingFragileNotPrimeOrders += (t.next - t.current) * numberNotPrimeJobsSortingFragileCenter;
             areaSortingNotFragilePrimeOrders += (t.next - t.current) * numberPrimeJobsSortingNotFragileCenter;
             areaSortingNotFragileNotPrimeOrders += (t.next - t.current) * numberNotPrimeJobsSortingNotFragileCenter;
-            //if(numberJobsPickingCenter > SERVERS_PICKING)
-                areaQueuePickingCenter += (t.next - t.current) * (numberJobsPickingCenter - SERVERS_PICKING);
 
-            //if(numberPrimeJobsSortingFragileCenter > SERVERS_SORTING_FRAGILE_ORDERS)
+            if(numberJobsPickingCenter > SERVERS_PICKING)
+                areaQueuePickingCenter += (t.next - t.current) * (numberJobsPickingCenter - SERVERS_PICKING);
+            if(numberJobsPackingCenter > SERVERS_PACKING)
+                areaQueuePackingCenter += (t.next - t.current) * (numberJobsPackingCenter - SERVERS_PICKING);
+
+            if(numberPrimeJobsSortingFragileCenter > SERVERS_SORTING_FRAGILE_ORDERS)
                 areaQueueFragilePrimeOrders += (t.next - t.current) * (numberPrimeJobsSortingFragileCenter );
-            //if(numberNotPrimeJobsSortingFragileCenter > SERVERS_SORTING_FRAGILE_ORDERS)
+            if(numberNotPrimeJobsSortingFragileCenter > SERVERS_SORTING_FRAGILE_ORDERS)
                 areaQueueFragileNotPrimeOrders += (t.next - t.current) * (numberNotPrimeJobsSortingFragileCenter );
 
-            //if(numberNotPrimeJobsSortingNotFragileCenter > SERVERS_SORTING_NOT_FRAGILE_ORDERS)
+            if(numberNotPrimeJobsSortingNotFragileCenter > SERVERS_SORTING_NOT_FRAGILE_ORDERS)
                 areaQueueNotFragileNotPrimeOrders += (t.next - t.current) * (numberNotPrimeJobsSortingNotFragileCenter );
-            //if(numberPrimeJobsSortingNotFragileCenter > SERVERS_SORTING_NOT_FRAGILE_ORDERS)
+            if(numberPrimeJobsSortingNotFragileCenter > SERVERS_SORTING_NOT_FRAGILE_ORDERS)
                  areaQueueNotFragilePrimeOrders += (t.next - t.current) * (numberPrimeJobsSortingNotFragileCenter );
 
             t.current = t.next;                                                 //advance the simulation clock
@@ -251,11 +269,13 @@ public class Simulator {
                 /* ogni partenza è un arrivo, quindi */
                 event[EVENT_ARRIVAL_PACKING].x =1;
                 event[EVENT_ARRIVAL_PACKING].t = event[sPickingCenter].t;
+                arrivoPacking = t.current;
 
 
             }
 
             else if(e == EVENT_ARRIVAL_PACKING) { //arrivo al packing center
+
                 event[e].x = 0;
                 numberJobsPackingCenter++;
                 if (numberJobsPackingCenter <= SERVERS_PACKING){
@@ -267,7 +287,7 @@ public class Simulator {
                     event[sPackingCenter].x = 1;
                 }
             }
-            else if( (e > EVENT_ARRIVAL_PACKING ) && (e <= EVENT_DEPARTURE_PACKING)  ) {  //partenza dal packing center
+            else if( (e > EVENT_ARRIVAL_PACKING ) && (e <= EVENT_DEPARTURE_PACKING) ) {  //partenza dal packing center
                 indexPackingCenter++;
                 numberJobsPackingCenter--;
                 double random;
@@ -288,20 +308,20 @@ public class Simulator {
                 if(random <= QUALITY_CENTER_PROB) { //34% di probabilità di andare al quality center
                         event[EVENT_ARRIVAL_QUALITY].x = 1;
                         event[EVENT_ARRIVAL_QUALITY].t = event[sPackingCenter].t;
-
+                        arrivoQualityControl = t.current;
 
                 }
                 else{ //66% di probabilità di andare al sorting center fragile oppure non fragile
                     random = r.random();
                     if (random <= SORTING_FRAGILE_CENTER) {  //qui decido se andare al sorting center fragile o not fragile (se la condizione è verficata vado al fragile)
                         //numberJobsSortingFragileCenter++;
+                        arrivoFragile = t.current;
                         random = r.random();
                         if (random <= ORDER_PRIME) { //qui decido in quale coda del sorting center fragile andare (prime o not prime)
                             event[EVENT_ARRIVAL_SORTING_FRAGILE_PRIME_ORDERS].x = 1;
                             event[EVENT_ARRIVAL_SORTING_FRAGILE_PRIME_ORDERS].t = event[sPackingCenter].t;
                             numberPrimeJobsSortingFragileCenter++;
                         }
-
                         else{
                             event[EVENT_ARRIVAL_SORTING_FRAGILE_NOT_PRIME_ORDERS].x = 1;
                             event[EVENT_ARRIVAL_SORTING_FRAGILE_NOT_PRIME_ORDERS].t = event[sPackingCenter].t;
@@ -310,6 +330,7 @@ public class Simulator {
                     }
                     else { //qui vado al centro di smistamento resistenti
                         //numberJobsSortingNotFragileCenter++;
+                        arrivoResistent = t.current;
                         random = r.random();
                         if (random <=ORDER_PRIME){ //qui decido in quale coda del sorting center NON fragile andare (prime o not prime)
                             event[EVENT_ARRIVAL_SORTING_NOT_FRAGILE_PRIME_ORDERS].x = 1;
@@ -322,10 +343,11 @@ public class Simulator {
                             numberNotPrimeJobsSortingNotFragileCenter++;
                         }
                     }
-
                 }
+
             }
             else if( e == EVENT_ARRIVAL_QUALITY ){ //arrivo al quality center
+
                 event[e].x = 0;
                 numberJobsQualityCenter++;
                 if (numberJobsQualityCenter <= SERVERS_QUALITY){
@@ -353,22 +375,28 @@ public class Simulator {
                 } else {
                     event[sQualityCenter].x = 0;
                 }
-                if(random <= PICKING_CENTER_PROB) { //5% di probabilità di andare al picking center (TEST FALLITO)
+
+
+                System.out.println(idfBernoulli(BERNOULLI_PROB_SUCCESS, r.random()));
+
+                if(idfBernoulli(BERNOULLI_PROB_SUCCESS, r.random()) == 0) { //probabilità di andare al picking center (TEST FALLITO)
                     numberFeedbackIsTrue++; //conto il numero di job che non passano il test
                     event[EVENT_ARRIVAL_PICKING].x = 1;
                     event[EVENT_ARRIVAL_PICKING].t = event[sQualityCenter].t;
 
                 }
-                else{ //95% di probabilità di andare al sorting center fragile oppure non fragile
+                else{ //probabilità di andare al sorting center fragile oppure non fragile (TEST SUPERATO)
                     random = r.random();
 
                     if (random <= SORTING_FRAGILE_CENTER) {  //qui decido se andare al sorting center fragile o not fragile (se la condizione è verficata vado al fragile)
                         //numberJobsSortingFragileCenter++;
+                        arrivoFragile = t.current;
                         random = r.random();
                         if (random <= ORDER_PRIME) { //qui decido in quale coda del sorting center fragile andare (prime o not prime)
                             event[EVENT_ARRIVAL_SORTING_FRAGILE_PRIME_ORDERS].x = 1;
                             event[EVENT_ARRIVAL_SORTING_FRAGILE_PRIME_ORDERS].t = event[sQualityCenter].t;
                             //numberPrimeJobsSortingFragileCenter++;
+
 
                         }
                         else {
@@ -379,6 +407,7 @@ public class Simulator {
                     }
                     else {
                         random = r.random();
+                        arrivoResistent = t.current;
                         //numberJobsSortingNotFragileCenter++;
                         if (random <= ORDER_PRIME) { //qui decido in quale coda del sorting center NON fragile andare (prime o not prime)
                             event[EVENT_ARRIVAL_SORTING_NOT_FRAGILE_PRIME_ORDERS].x = 1;
@@ -391,10 +420,10 @@ public class Simulator {
                             //numberNotPrimeJobsSortingNotFragileCenter++;
                         }
                     }
-
                 }
             }
             else if(e == EVENT_ARRIVAL_SORTING_FRAGILE_PRIME_ORDERS || e == EVENT_ARRIVAL_SORTING_FRAGILE_NOT_PRIME_ORDERS){ //arrivi al centro smistamento ordini fragili
+
                 event[e].x =0;
                 numberJobsSortingFragileCenter++;
                 if (numberJobsSortingFragileCenter <= SERVERS_SORTING_FRAGILE_ORDERS) {
@@ -430,6 +459,7 @@ public class Simulator {
 
             }
             else if( e == EVENT_ARRIVAL_SORTING_NOT_FRAGILE_PRIME_ORDERS || e == EVENT_ARRIVAL_SORTING_NOT_FRAGILE_NOT_PRIME_ORDERS){ //arrivi al centro di smistamento ordini resistenti
+                arrivoResistent = t.current;
                 event[e].x = 0;
                 numberJobsSortingNotFragileCenter++;
                 if(numberJobsSortingNotFragileCenter <= SERVERS_SORTING_NOT_FRAGILE_ORDERS){
@@ -473,7 +503,11 @@ public class Simulator {
             System.out.println("partenze nel centro di smistamento ordini fragili: " + indexSortingFragileOrders);
             System.out.println("numero di job nel centro di smistamento ordini NON fragili: " + numberJobsSortingNotFragileCenter);
             System.out.println("partenze nel centro di smistamento ordini NON fragili: " + indexSortingNotFragileOrders);*/
-            //arrivo += (sarrival - t.current);
+            arrivalsCounter[0] += (sarrival - t.current);
+            arrivalsCounter[1] += t.current - arrivoPacking;
+            arrivalsCounter[2]  += Math.abs(arrivoQualityControl  - t.current);
+            arrivalsCounter[3]  += Math.abs(arrivoFragile - t.current);
+            arrivalsCounter[4]  += Math.abs(arrivoResistent - t.current);
             if(indexPickingCenter !=0 ) {
                 responseTimeCounter[0] += areaPickingCenter / indexPickingCenter;
                 waitingTimerCounter[0] += areaQueuePickingCenter / indexPickingCenter;
@@ -503,6 +537,8 @@ public class Simulator {
                     utilizationCounter[2] += sum[s].service;
                 utilizationCounter[2] = utilizationCounter[2] / SERVERS_QUALITY;
                 utilizationCounter[2] = (utilizationCounter[2]*1000) /t.current;
+                goBackProb += ((double )numberFeedbackIsTrue / (double) indexQualityCenter);
+
             }
             if(indexSortingFragileOrders !=0 ) {
                 responseTimeCounter[3] += areaSortingFragileOrders / indexSortingFragileOrders;
@@ -513,8 +549,8 @@ public class Simulator {
                 numberWaitingTimeCounter[4] += areaQueueFragileNotPrimeOrders / t.current;
                 for (int s = EVENT_ARRIVAL_SORTING_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
                     utilizationCounter[3] += sum[s].service;
-                //utilizationCounter[3] = utilizationCounter[3] / SERVERS_SORTING_FRAGILE_ORDERS;
-                utilizationCounter[3] = (utilizationCounter[3]) /t.current;
+                utilizationCounter[3] = utilizationCounter[3] / SERVERS_SORTING_FRAGILE_ORDERS;
+                utilizationCounter[3] = (utilizationCounter[3]*1000) /t.current;
             }
             if(indexSortingNotFragileOrders !=0 ) {
                 responseTimeCounter[4] += areaSortingNotFragileOrders / indexSortingNotFragileOrders;
@@ -525,17 +561,24 @@ public class Simulator {
                 numberWaitingTimeCounter[6] += areaQueueNotFragileNotPrimeOrders / t.current;
                 for (int s = EVENT_ARRIVAL_SORTING_NOT_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
                     utilizationCounter[4] += sum[s].service;
-                utilizationCounter[4] += utilizationCounter[4] / SERVERS_SORTING_NOT_FRAGILE_ORDERS;
-                utilizationCounter[4] = (utilizationCounter[4]*10) /t.current;
+                utilizationCounter[4] = utilizationCounter[4] / SERVERS_SORTING_NOT_FRAGILE_ORDERS;
+                utilizationCounter[4] = (utilizationCounter[4]*1000) /t.current;
             }
 
-
                 if(batchJob == batchSize-1) {
-                //arrivals[0][batchNumber] = arrivo / batchSize;
+
+                    goBackProbRecord[batchNumber] = goBackProb / batchSize;
+
                     for (int j =0; j < 5; j++){
+                        //LOCALI
                         responseTimerecords[j][batchNumber] = responseTimeCounter[j] / batchSize; //(E(Ts))
                         numberResponseTimerecords[j][batchNumber] = numberResponseTimeCounter[j] / batchSize; //(E(Ns))
                         utilizationRecords[j][batchNumber] = utilizationCounter[j] / batchSize;
+                        arrivals[j][batchNumber] = arrivalsCounter[j] / batchSize;
+                        //globali
+                        totalResponseTime[batchNumber] += responseTimerecords[j][batchNumber]; //calcolo i
+
+
                     }
                     for (int j =0; j < 7; j++){
                         waitingTimerecords[j][batchNumber] = waitingTimerCounter[j] / batchSize; //(E(Tq))
@@ -546,13 +589,14 @@ public class Simulator {
                         responseTimeCounter[j] =0; //(E(Ts))
                         numberResponseTimeCounter[j] = 0; //(E(Ns))
                         utilizationCounter[j] = 0;
+                        arrivalsCounter[j] = 0;
                     }
                     for (int j =0; j < 7; j++){
                         waitingTimerCounter[j]= 0; //(E(Tq))
                         numberWaitingTimeCounter[j]  = 0;
                     }
+                goBackProb = 0.0;
                 batchJob = 0; //passo al prossimo batch e salvo le statistiche nel batch associato
-
             }
             if(flag == 0)
                if(event[0].x != 0)
@@ -565,11 +609,13 @@ public class Simulator {
                 else
                     cond = false;
         } //end while
-        DecimalFormat f = new DecimalFormat("###0.00000");
+        DecimalFormat f = new DecimalFormat("###0.0000000");
 
         System.out.println("----------------------------------------------------");
 
         for (int j =0; j < 5; j++){
+            System.out.println("\n");
+            System.out.println(centerNames[j]);
             System.out.println("E(Ts)");
             estimate.main(responseTimerecords[j]);
             System.out.println("E(Ns)");
@@ -578,6 +624,8 @@ public class Simulator {
             estimate.main(utilizationRecords[j]);
         }
         for (int j =0; j < 7; j++){
+            System.out.println("\n");
+            System.out.println(centerNamesQueue[j]);
             System.out.println("E(Tq)");
             estimate.main(waitingTimerecords[j]);
             System.out.println("E(Nq)");
@@ -586,12 +634,48 @@ public class Simulator {
 
         SwingUtilities.invokeLater(() -> {
             for (int i =0;i < 5; i++) {
-                grafico[i] = new plotter(centerNames[i], responseTimerecords, this.k, this.batchSize, i);
+                grafico[i] = new plotter(centerNames[i],"tempo di riposta", responseTimerecords, this.k, this.batchSize, i);
                 grafico[i].setSize(800, 600);
                 grafico[i].setLocationRelativeTo(null);
                 grafico[i].setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 grafico[i].setVisible(true);
             }
+        });
+        SwingUtilities.invokeLater(() -> {
+            for (int i =0;i < 5; i++) {
+                grafico[i] = new plotter(centerNames[i],"lamda", arrivals, this.k, this.batchSize, i);
+                grafico[i].setSize(800, 600);
+                grafico[i].setLocationRelativeTo(null);
+                grafico[i].setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                grafico[i].setVisible(true);
+            }
+        });
+
+        /*SwingUtilities.invokeLater(() -> {
+            for (int i =0;i < 5; i++) {
+                grafico[i] = new plotter(centerNames[i],"lamda", arrivals, this.k, this.batchSize, i);
+                grafico[i].setSize(800, 600);
+                grafico[i].setLocationRelativeTo(null);
+                grafico[i].setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                grafico[i].setVisible(true);
+            }
+        });*/
+
+        SwingUtilities.invokeLater(() -> {
+                plotter graficoRespTimeTot = new plotter("sistema","tempo di risposta totale", totalResponseTime, this.k, this.batchSize);
+            graficoRespTimeTot.setSize(800, 600);
+            graficoRespTimeTot.setLocationRelativeTo(null);
+            graficoRespTimeTot.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            graficoRespTimeTot.setVisible(true);
+
+        });
+        SwingUtilities.invokeLater(() -> {
+            plotter graficoGoBackProb = new plotter("","probabilità ordine difettoso", goBackProbRecord, this.k, this.batchSize);
+            graficoGoBackProb.setSize(800, 600);
+            graficoGoBackProb.setLocationRelativeTo(null);
+            graficoGoBackProb.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            graficoGoBackProb.setVisible(true);
+
         });
 
         //stampo i risultati
@@ -610,8 +694,7 @@ public class Simulator {
         System.out.println("partenze di tipo PRIME nel centro di smistamento ordini NON fragili: " + indexSortingNotFragilePrimeOrders);
         System.out.println("partenze di tipo NON PRIME nel centro di smistamento ordini NON fragili: " + indexSortingNotFragileNotPrimeOrders);
         System.out.println("numeri di job non passati: " +numberFeedbackIsTrue);
-        System.out.println("PERCENTUALE DI JOB NON PASSATI: " +f.format((double ) numberFeedbackIsTrue/indexQualityCenter));
-
+        System.out.println("PERCENTUALE DI JOB NON PASSATI: " +f.format((double ) 100*(numberFeedbackIsTrue/indexQualityCenter)));
 
         System.out.println("----------------------------------------------------");
         //nel nodo
@@ -640,6 +723,9 @@ public class Simulator {
         //System.out.println("  avg interarrivals .. =   " + f.format(() / indexSortingNotFragileOrders)); //E(interrarrivo)
         System.out.println("  avg wait ........... =   " + f.format(areaSortingNotFragileOrders / indexSortingNotFragileOrders));  //E(Ts)
         System.out.println("  avg # in node ...... =   " + f.format(areaSortingNotFragileOrders / t.current)); //E(Ns)*/
+
+        for (int s = EVENT_ARRIVAL_PICKING + 1; s <= EVENT_DEPARTURE_PICKING; s++)          /* adjust area to calculate */
+            areaPickingCenter -= sum[s].service;              /* averages for the queue   */
 
         for (int s = EVENT_ARRIVAL_PACKING + 1; s <= EVENT_DEPARTURE_PACKING; s++)          /* adjust area to calculate */
             areaPackingCenter -= sum[s].service;              /* averages for the queue   */
@@ -697,27 +783,33 @@ public class Simulator {
         r.selectStream(streamIndex);
         Rvms rvms = new Rvms();
         double m= 0.0;
+        double std = 0;
         switch (center) {
             case 1: //picking
                 m = SERVICE_TIME_PICKING;
+                std =STD_SERVICE_TIME_PICKING;
                 break;
             case 2: //packing
                 m = SERVICE_TIME_PACKING;
+                std =STD_SERVICE_TIME_PACKING;
                 break;
             case 3: //quality
                 m = SERVICE_TIME_QUALITY;
+                std =STD_SERVICE_TIME_QUALITY;
                 break;
             case 4: //sorting fragile
                 m = SERVICE_TIME_SORTING_FRAGILE_ORDERS;
+                std =STD_SERVICE_SORTING_FRAGILE_ORDERS;
                 break;
             case 5: //sorting not fragile
                 m = SERVICE_TIME_SORTING_NOT_FRAGILE_ORDERS;
+                std =STD_SERVICE_SORTING_NOT_FRAGILE_ORDERS;
                 break;
             default:
                 new Exception("Errore nella selezione dello stream");
                 break;
         }
-        return rvms.idfExponential(m, r.random());
+        return rvms.idfNormal(m, std,r.random());
 
     }
 
@@ -730,8 +822,17 @@ public class Simulator {
 
         Rvms rvms = new Rvms();
         //int index = utils.fasciaOrariaSwitch(listaFasciaOraria, currentTime);
-        sarrival += rvms.idfPoisson(2.004, r.random());
+        sarrival += rvms.idfPoisson(ARRIVAL, r.random());
         return (sarrival);
+    }
+
+    public long idfBernoulli(double p, double u)
+        /* =========================================
+         * NOTE: use 0.0 < p < 1.0 and 0.0 < u < 1.0
+         * =========================================
+         */
+    {
+        return ((u < 1.0 - p) ? 0 : 1);
     }
 
     int nextEvent(Event[] event) {
@@ -799,4 +900,6 @@ public class Simulator {
         }
         return (s);
     }
+
+
 }

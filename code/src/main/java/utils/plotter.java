@@ -11,7 +11,8 @@ import javax.swing.*;
 
 public class plotter extends JFrame {
 
-    public plotter(String title, double[][] data, int k, int b, int center) {
+
+    public plotter(String title, String asseY, double[][] data, int k, int b, int center) {
         super(title);
 
         XYSeries series = new XYSeries("Funzione");
@@ -23,7 +24,32 @@ public class plotter extends JFrame {
         JFreeChart chart = ChartFactory.createXYLineChart(
                 title, // Titolo del grafico
                 "numero di job", // Etichetta asse X
-                "tempo di riposta", // Etichetta asse Y
+                asseY, // Etichetta asse Y
+                dataset, // Dati
+                PlotOrientation.VERTICAL,
+                true, // Mostra la legenda
+                true,
+                false
+        );
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(560, 370));
+        setContentPane(chartPanel);
+    }
+
+    public plotter(String sistema, String asseY, double[] data, int k, int batchSize) {
+        super(sistema);
+
+        XYSeries series = new XYSeries("Funzione");
+        for (int j=0; j < k ; j++) {
+            series.add(j*batchSize, data[j]); // Inserire qui la propria funzione
+        }
+
+        XYSeriesCollection dataset = new XYSeriesCollection(series);
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                sistema, // Titolo del grafico
+                "numero di job", // Etichetta asse X
+                asseY, // Etichetta asse Y
                 dataset, // Dati
                 PlotOrientation.VERTICAL,
                 true, // Mostra la legenda
