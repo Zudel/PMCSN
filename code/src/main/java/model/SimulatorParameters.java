@@ -1,7 +1,7 @@
 package model;
 
 public class SimulatorParameters {
-    public static final double ARRIVAL   = 1.0;      //(ARRIVAL = 2.0, 0.66 lambda = 0.5, 1.5)
+    public static final double ARRIVAL   = 0.66666;      //(ARRIVAL = 2.0, 0.66 lambda = 0.5, 1.5)
     public static final double START   = 0.0;            /* initial (open the door)        */
     public static final double STOP_BATCH    = 131072; /* close the door batch*/
 
@@ -10,11 +10,11 @@ public class SimulatorParameters {
     public static final double ORDER_PRIME = 0.62;
     public static final double SORTING_FRAGILE_CENTER = 0.5;
     //SERVERS
-    public static final int    SERVERS_PICKING = 36;              /* number of servers        60-70-80      ARE DEPARTURES*/
-    public static final int   SERVERS_PACKING = 40;              /* number of servers        20-30-40      */
-    public static final int    SERVERS_QUALITY = 85;
-    public static final int    SERVERS_SORTING_FRAGILE_ORDERS = 48;
-    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS = 49;
+    public static final int    SERVERS_PICKING = 46;              /* number of servers        60-70-80      ARE DEPARTURES*/
+    public static final int   SERVERS_PACKING = 54;              /* number of servers        20-30-40      */
+    public static final int    SERVERS_QUALITY = 103;
+    public static final int    SERVERS_SORTING_FRAGILE_ORDERS = 62;
+    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS = 58;
 
     //events
     public static final int EVENT_ARRIVAL_PICKING = 0;

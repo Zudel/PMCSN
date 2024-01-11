@@ -44,7 +44,7 @@ public class plotter extends JFrame {
         setContentPane(chartPanel);
         // Salva il grafico come PNG
         // Salva il grafico come PNG
-        File file = new File("C:\\Users\\Roberto\\Desktop\\c.PNG");
+        File file = new File("C:\\Users\\Roberto\\Desktop\\center"+center);
         try {
             saveChartAsPNG(file, chartPanel.getChart(), 560, 370);
         } catch (IOException e) {
@@ -76,6 +76,12 @@ public class plotter extends JFrame {
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(560, 370));
         setContentPane(chartPanel);
+        File file = new File("C:\\Users\\Roberto\\Desktop\\sistema");
+        try {
+            saveChartAsPNG(file, chartPanel.getChart(), 560, 370);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /*public  void main(String[] args) {

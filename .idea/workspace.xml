@@ -6,10 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="73dcb141-e879-4a17-87af-80d7f7942b65" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/code/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Resistent_RT_PrimaFascia.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/Simulator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/plotter.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/plotter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/difetto.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/difetto_primaFascia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/distribuzione ordini giornalieri.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fragile_RT_Prima fascia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/packing_TR_Primafascia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/picking_TR_Primafascia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/quality_RT_primaFascia.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -216,7 +223,7 @@
       <workItem from="1704618460688" duration="531000" />
       <workItem from="1704619424160" duration="9848000" />
       <workItem from="1704636234953" duration="6229000" />
-      <workItem from="1704706919423" duration="11559000" />
+      <workItem from="1704706919423" duration="17883000" />
     </task>
     <servers />
   </component>
