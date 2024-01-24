@@ -6,17 +6,37 @@
   <component name="ChangeListManager">
     <list default="true" id="73dcb141-e879-4a17-87af-80d7f7942b65" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Resistent_RT_PrimaFascia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/Replication.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/Simulator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/SteadyStateSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/SteadyStateSimulation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/WriteDoubleListToFile.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/plotter.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/plotter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/difetto.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/difetto_primaFascia.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/distribuzione ordini giornalieri.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fragile_RT_Prima fascia.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packing_TR_Primafascia.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/picking_TR_Primafascia.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/quality_RT_primaFascia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/prima conf/Resistent_RT_PrimaFascia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/prima conf/difetto_primaFascia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/prima conf/fragile_RT_Prima fascia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/prima conf/packing_TR_Primafascia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/prima conf/picking_TR_Primafascia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/prima conf/quality_RT_primaFascia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/TR_totale.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/difetto_migliore.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/fragile_RTmigliore.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/packing_RT_migliore.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/picking_RT_milgiore.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/qualityRTMigliore.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/resistent_RTmigliore.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/difetto.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/fragile_RT.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/packing_RT.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/picking_RT.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/quality_RT.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/resistent_RT.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/seconda conf/difetto.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/seconda conf/fragile_RTMeglio.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/seconda conf/packing_RTMeglio.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/seconda conf/picking_RTMeglio.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/seconda conf/quality_RTMeglio.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/seconda conf/resistent_RTMeglio.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,8 +99,8 @@
     </key>
   </component>
   <component name="RunManager" selected="Application.SteadyStateSimulation">
-    <configuration name="Acs" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="utils.Acs" />
+    <configuration name="CSVLibrary" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="utils.CSVLibrary" />
       <module name="code" />
       <extension name="coverage">
         <pattern>
@@ -135,10 +155,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Application.SteadyStateSimulation" />
+        <item itemvalue="Application.CSVLibrary" />
         <item itemvalue="Application.plotter" />
         <item itemvalue="Application.Simulator" />
         <item itemvalue="Application.Uvs" />
-        <item itemvalue="Application.Acs" />
       </list>
     </recent_temporary>
   </component>
@@ -224,6 +244,14 @@
       <workItem from="1704619424160" duration="9848000" />
       <workItem from="1704636234953" duration="6229000" />
       <workItem from="1704706919423" duration="17883000" />
+      <workItem from="1705076036210" duration="5000" />
+      <workItem from="1705930853817" duration="591000" />
+      <workItem from="1705932309348" duration="1795000" />
+      <workItem from="1705938703317" duration="10582000" />
+      <workItem from="1706015990948" duration="6551000" />
+      <workItem from="1706037875995" duration="4274000" />
+      <workItem from="1706093341574" duration="3051000" />
+      <workItem from="1706104982542" duration="17468000" />
     </task>
     <servers />
   </component>

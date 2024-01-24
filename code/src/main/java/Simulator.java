@@ -1,7 +1,6 @@
 import mathLib.Rngs;
 import mathLib.Rvms;
-import mathLib.Uvs;
-import org.jfree.data.function.NormalDistributionFunction2D;
+import utils.CSVLibrary;
 import utils.Estimate;
 import utils.plotter;
 
@@ -38,54 +37,48 @@ class T {
  * evento completamento sorting not fragile [91, 101]
  */
 
-//(b,k) = (256, 126) k = parte inferiore (n/b) = 32400/256 = 126
-
 public class Simulator {
 
-    private static double[] responseTimeCounter;
-    private static double[] waitingTimerCounter;
-    private static double[] utilizationCounter;
-    private static double[] numberResponseTimeCounter;
-    private static double[] numberWaitingTimeCounter;
+    private  double[] responseTimeCounter;
+    private  double[] waitingTimerCounter;
+    private  double[] utilizationCounter;
+    private  double[] numberResponseTimeCounter;
+    private  double[] numberWaitingTimeCounter;
 
-    private static int batchSize;
-    private static int k;
+    private  int batchSize;
+    private  int k;
     private static double service;
     private  int flag;
-    private static double pickingResponseTime; //contatori per la media di un batch
-    private static double packingResponseTime;
-    private static double qualityResponseTime;
-    private static double fragileSortingResponseTime;
-    private static double notFragileSortingResponseTime;
-    private static double pickingWaitingTime;
-    private static double packingWaitingTime;
-    private static double qualityWaitingTime;
-    private static double fragileSortingPrimeWaitingTime;
-    private static double fragileSortingNotPrimeWaitingTime;
-    private static double notFragileSortingPrimeWaitingTime;
-    private static double notFragileSortingNotPrimeWaitingTime;
+    private  double pickingResponseTime; //contatori per la media di un batch
+    private  double packingResponseTime;
+    private  double qualityResponseTime;
+    private  double fragileSortingResponseTime;
+    private  double notFragileSortingResponseTime;
 
-    private static double sarrival = START;
-    private static double[][] responseTimerecords;
-    private static double[][] waitingTimerecords;
-    private static double[][] numberResponseTimerecords;
-    private static double[][] numberWaitingTimerecords;
-    private static double[][] utilizationRecords;
-    private static double[]arrivalsCounter;
-    private static double[][] arrivals;
-    private static double[][] domandaMedia;
+    private  double sarrival = START;
+    private  double[][] responseTimerecords;
+    private  double[][] waitingTimerecords;
+    private  double[][] numberResponseTimerecords;
+    private  double[][] numberWaitingTimerecords;
+    private  double[][] utilizationRecords;
+    private  double[]arrivalsCounter;
+    private  double[][] arrivals;
+    private  double[][] domandaMedia;
     private double[] totalResponseTime;
     private double goBackProb;
     private double[] goBackProbRecord;
+    private double pSuccess;
+    private double stop;
+    private  int rep;
+    private Rngs r = new Rngs();
+    private CSVLibrary[] csvStatistics;
 
 
     //static List<FasciaOraria> listaFasciaOraria = utils.LeggiCSV("C:\\Users\\Roberto\\Documents\\GitHub\\PMCSN\\code\\src\\main\\resources\\distribuzioneOrdiniGiornalieri.csv");
 
     public Simulator(int batchSize, int k, int flag){ //k is batches number
         this.batchSize = batchSize;
-        //System.out.println("batchSize: "+ batchSize);
         this.k = k;
-        //System.out.println("k: "+ this.k);
         this.flag = flag;
 
         responseTimerecords = new double[5][k]; //ongi riga corrisponde a un centro, ogni colonna corrisponde alla media di un batch
@@ -103,8 +96,43 @@ public class Simulator {
         totalResponseTime = new double[k];
         goBackProbRecord = new double[k];
         domandaMedia = new double[5][k];
+        if(SERVERS_PICKING + SERVERS_PACKING <= 20)
+            pSuccess = 0.950;
+        else
+            pSuccess = BERNOULLI_PROB_SUCCESS;
+        stop = STOP_BATCH;
 
+    }
 
+    public Simulator(int batchSize, int k, int flag, int j, Rngs r, CSVLibrary[] csvStatistics) {
+        this.batchSize = batchSize;
+        //System.out.println("batchSize: "+ batchSize);
+        this.k = k;
+        //System.out.println("k: "+ this.k);
+        this.flag = flag;
+        this.rep = j;
+        this.r = r;
+        this.csvStatistics = csvStatistics;
+        responseTimerecords = new double[5][k]; //ongi riga corrisponde a un centro, ogni colonna corrisponde alla media di un batch
+        waitingTimerecords = new double[7][k];
+        numberResponseTimerecords = new double[5][k];
+        numberWaitingTimerecords = new double[7][k];
+        utilizationRecords = new double[5][k];
+        arrivals = new double[5][k];
+        arrivalsCounter = new double[k];
+        responseTimeCounter = new double[5]; //sono i contatori per ogni batch
+        waitingTimerCounter = new double[7];
+        numberResponseTimeCounter = new double[5];
+        numberWaitingTimeCounter = new double[7];
+        utilizationCounter = new double[5];
+        totalResponseTime = new double[k];
+        goBackProbRecord = new double[k];
+        domandaMedia = new double[5][k];
+        if(SERVERS_PICKING + SERVERS_PACKING <= 20)
+            pSuccess = 0.950;
+        else
+            pSuccess = BERNOULLI_PROB_SUCCESS;
+        stop = STOP;
     }
 
 
@@ -146,7 +174,6 @@ public class Simulator {
         double areaQueueNotFragileNotPrimeOrders =0.0;
         double areaQueuePackingCenter =0.0;
 
-
         long indexPickingCenter   = 0;             /* used to count departed jobs         */
         long indexPackingCenter   = 0;             /* used to count departed jobs         */
         long indexQualityCenter   = 0;             /* used to count departed jobs         */
@@ -162,8 +189,8 @@ public class Simulator {
         long indexSortingNotFragilePrimeOrders=0;
         long indexSortingNotFragileNotPrimeOrders=0;
 
-        Simulator sim = new Simulator(batchSize, k, flag);
-        Rngs r = new Rngs();
+        //Simulator sim = new Simulator(batchSize, k, flag);
+
         Estimate estimate = new Estimate();
         plotter[] grafico = new plotter[5];
         String[]  centerNames = new String[]{"picking", "packing", "quality", "resistent order", "fragile order"};
@@ -177,11 +204,10 @@ public class Simulator {
             sum [s]  = new Sum();
         }
 
-        //r.putSeed(123456789);
-        r.plantSeeds(123456789);
+        r.putSeed(123456789);
         //inizializzazione array eventi e sum
         t.current    = START;
-        event[0].t   = sim.getArrival(r,  1); //first arrival to the server node
+        event[0].t   = getArrival(r,  1+k); //first arrival to the server node
         event[0].x   = 1;
         numberJobsPickingCenter++;
 
@@ -204,7 +230,7 @@ public class Simulator {
             cond = false;
         // INIZIO SIMULAZIONE //
         while (cond) {
-            e         = sim.nextEvent(event);
+            e         = nextEvent(event);
             t.next    = event[e].t;                                              //next event time
             areaPickingCenter     += (t.next - t.current) * numberJobsPickingCenter;     //update integral of picking center
             areaPackingCenter     += (t.next - t.current) * numberJobsPackingCenter;     //update integral of packing center
@@ -237,18 +263,17 @@ public class Simulator {
             if(t.current <= STOP_BATCH)
                 batchNumber = (int) t.current / batchSize;
             batchJob++;
-
             if (e == EVENT_ARRIVAL_PICKING) { //arrivo al picking center
                 numberJobsPickingCenter++;
-                event[0].t = sim.getArrival(r, 1);
+                event[0].t = getArrival(r, 1+rep);
                 arrivalsCounter[0] += (sarrival - t.current);
 
-                if (event[0].t > STOP_BATCH)
+                if (event[0].t > stop)
                     event[0].x = 0; //close the door
 
                 if (numberJobsPickingCenter <= SERVERS_PICKING) {
-                    service = sim.getServiceMultiServer(r, 2, PICKING);
-                    sPickingCenter = sim.findOne(event, PICKING);
+                    service = getServiceMultiServer(r, 2+rep, PICKING);
+                    sPickingCenter = findOne(event, PICKING);
                     sum[sPickingCenter].service += service;
                     sum[sPickingCenter].served++;
                     event[sPickingCenter].t = t.current + service;
@@ -261,7 +286,7 @@ public class Simulator {
 
                 sPickingCenter = e;
                 if (numberJobsPickingCenter > SERVERS_PICKING) {
-                    service = sim.getServiceMultiServer(r, 2, PICKING);
+                    service = getServiceMultiServer(r, 2+rep, PICKING);
                     sum[sPickingCenter].service += service;
                     sum[sPickingCenter].served++;
                     event[sPickingCenter].t = t.current + service;
@@ -285,8 +310,8 @@ public class Simulator {
                 event[e].x = 0;
                 numberJobsPackingCenter++;
                 if (numberJobsPackingCenter <= SERVERS_PACKING){
-                    service = sim.getServiceMultiServer(r, 4,PACKING);
-                    sPackingCenter = sim.findOne(event, PACKING);
+                    service = getServiceMultiServer(r, 4+rep,PACKING);
+                    sPackingCenter = findOne(event, PACKING);
                     sum[sPackingCenter].service += service;
                     sum[sPackingCenter].served++;
                     event[sPackingCenter].t = t.current + service;
@@ -302,7 +327,7 @@ public class Simulator {
                 /*genero una partenza */
                 sPackingCenter = e;
                 if (numberJobsPackingCenter > SERVERS_PACKING) {
-                    service = sim.getServiceMultiServer(r,4, PACKING);
+                    service = getServiceMultiServer(r,4+rep, PACKING);
                     sum[sPackingCenter].service += service;
                     sum[sPackingCenter].served++;
                     event[sPackingCenter].t = t.current + service;
@@ -358,8 +383,8 @@ public class Simulator {
                 event[e].x = 0;
                 numberJobsQualityCenter++;
                 if (numberJobsQualityCenter <= SERVERS_QUALITY){
-                    service = sim.getServiceMultiServer(r, 6,QUALITY);
-                    sQualityCenter = sim.findOne(event, QUALITY);
+                    service = getServiceMultiServer(r, 6+rep,QUALITY);
+                    sQualityCenter = findOne(event, QUALITY);
                     sum[sQualityCenter].service += service;
                     sum[sQualityCenter].served++;
                     event[sQualityCenter].t = t.current + service;
@@ -373,7 +398,7 @@ public class Simulator {
 
                 sQualityCenter = e;
                 if (numberJobsQualityCenter > SERVERS_QUALITY) {
-                    service = sim.getServiceMultiServer(r, 6, QUALITY);
+                    service = getServiceMultiServer(r, 6+rep, QUALITY);
 
                     sum[sQualityCenter].service += service;
                     sum[sQualityCenter].served++;
@@ -383,10 +408,7 @@ public class Simulator {
                     event[sQualityCenter].x = 0;
                 }
 
-
-                System.out.println(idfBernoulli(BERNOULLI_PROB_SUCCESS, r.random()));
-                System.out.println(1-BERNOULLI_PROB_SUCCESS);
-                if(idfBernoulli(1-BERNOULLI_PROB_SUCCESS, r.random()) == 0) { //probabilità di andare al picking center (TEST FALLITO)
+                if(idfBernoulli(BERNOULLI_PROB_SUCCESS, r.random()) == 0) { //probabilità di andare al picking center (TEST FALLITO)
                     numberFeedbackIsTrue++; //conto il numero di job che non passano il test
                     event[EVENT_ARRIVAL_PICKING].x = 1;
                     event[EVENT_ARRIVAL_PICKING].t = event[sQualityCenter].t;
@@ -434,8 +456,8 @@ public class Simulator {
                 event[e].x =0;
                 numberJobsSortingFragileCenter++;
                 if (numberJobsSortingFragileCenter <= SERVERS_SORTING_FRAGILE_ORDERS) {
-                    service = sim.getServiceMultiServer(r, 9, SORTING_FRAGILE_ORDERS);
-                    sSortingFragileOrders = sim.findOne(event, SORTING_FRAGILE_ORDERS);
+                    service = getServiceMultiServer(r, 9+rep, SORTING_FRAGILE_ORDERS);
+                    sSortingFragileOrders =findOne(event, SORTING_FRAGILE_ORDERS);
                     sum[sSortingFragileOrders].service += service;
                     sum[sSortingFragileOrders].served++;
                     event[sSortingFragileOrders].t = t.current + service;
@@ -455,7 +477,7 @@ public class Simulator {
                 }
                 sSortingFragileOrders = e;
                 if(numberJobsSortingFragileCenter > SERVERS_SORTING_FRAGILE_ORDERS){
-                    service = sim.getServiceMultiServer(r, 9, SORTING_FRAGILE_ORDERS);
+                    service = getServiceMultiServer(r, 9+rep, SORTING_FRAGILE_ORDERS);
                     sum[sSortingFragileOrders].service += service;
                     sum[sSortingFragileOrders].served++;
                     event[sSortingFragileOrders].t = t.current + service;
@@ -471,8 +493,8 @@ public class Simulator {
                 event[e].x = 0;
                 numberJobsSortingNotFragileCenter++;
                 if(numberJobsSortingNotFragileCenter <= SERVERS_SORTING_NOT_FRAGILE_ORDERS){
-                    service = sim.getServiceMultiServer(r, 11, SORTING_NOT_FRAGILE_ORDERS);
-                    sSortingNotFragileOrders = sim.findOne(event, SORTING_NOT_FRAGILE_ORDERS);
+                    service = getServiceMultiServer(r, 11+rep, SORTING_NOT_FRAGILE_ORDERS);
+                    sSortingNotFragileOrders = findOne(event, SORTING_NOT_FRAGILE_ORDERS);
                     sum[sSortingNotFragileOrders].service += service;
                     sum[sSortingNotFragileOrders].served++;
                     event[sSortingNotFragileOrders].t = t.current + service;
@@ -492,7 +514,7 @@ public class Simulator {
                 }
                 sSortingNotFragileOrders = e;
                 if (numberJobsSortingNotFragileCenter > SERVERS_SORTING_NOT_FRAGILE_ORDERS) {
-                    service = sim.getServiceMultiServer(r, 11, SORTING_NOT_FRAGILE_ORDERS);
+                    service = getServiceMultiServer(r, 11+rep, SORTING_NOT_FRAGILE_ORDERS);
                     sum[sSortingNotFragileOrders].service += service;
                     sum[sSortingNotFragileOrders].served++;
                     event[sSortingNotFragileOrders].t = t.current + service;
@@ -511,96 +533,98 @@ public class Simulator {
             System.out.println("partenze nel centro di smistamento ordini fragili: " + indexSortingFragileOrders);
             System.out.println("numero di job nel centro di smistamento ordini NON fragili: " + numberJobsSortingNotFragileCenter);
             System.out.println("partenze nel centro di smistamento ordini NON fragili: " + indexSortingNotFragileOrders);*/
-            if(indexPickingCenter !=0 ) {
-                responseTimeCounter[0] += areaPickingCenter / indexPickingCenter;
-                waitingTimerCounter[0] += areaQueuePickingCenter / indexPickingCenter;
-                numberResponseTimeCounter[0] += areaPickingCenter / t.current;
-                numberWaitingTimeCounter[0] += areaQueuePickingCenter / t.current;
-                for (int s = EVENT_ARRIVAL_PICKING + 1; s <= EVENT_DEPARTURE_PICKING; s++) //calcolo l'utilizzazione del centro facendo la media
-                    utilizationCounter[0] += sum[s].service;
-                utilizationCounter[0] = utilizationCounter[0] / SERVERS_PICKING;
-                utilizationCounter[0] = (utilizationCounter[0]*1000) /t.current;
-            }
-            if(indexPackingCenter !=0 ) {
-                responseTimeCounter[1] += areaPackingCenter / indexPackingCenter;
-                waitingTimerCounter[1] += areaQueuePackingCenter / indexPackingCenter;
-                numberResponseTimeCounter[1] += areaPackingCenter / t.current;
-                numberWaitingTimeCounter[1] += areaQueuePackingCenter / t.current;
-                for (int s = EVENT_ARRIVAL_PACKING + 1; s <= EVENT_DEPARTURE_PACKING; s++) //calcolo l'utilizzazione del centro facendo la media
-                    utilizationCounter[1] += sum[s].service;
-                utilizationCounter[1] = utilizationCounter[1] / SERVERS_PACKING;
-                utilizationCounter[1] = (utilizationCounter[1]*1000) /t.current;
-            }
-            if(indexQualityCenter !=0 ) {
-                responseTimeCounter[2] += areaQualityCenter / indexQualityCenter;
-                waitingTimerCounter[2] += areaQueueQualityCenter / indexQualityCenter;
-                numberResponseTimeCounter[2] += areaQualityCenter / t.current;
-                numberWaitingTimeCounter[2] += areaQueueQualityCenter / t.current;
-                for (int s = EVENT_ARRIVAL_QUALITY + 1; s <= EVENT_DEPARTURE_QUALITY; s++) //calcolo l'utilizzazione del centro facendo la media
-                    utilizationCounter[2] += sum[s].service;
-                utilizationCounter[2] = utilizationCounter[2] / SERVERS_QUALITY;
-                utilizationCounter[2] = (utilizationCounter[2]*1000) /t.current;
-                goBackProb += ((double )numberFeedbackIsTrue / (double) indexQualityCenter);
+            if(flag == 0 ) {
+                if (indexPickingCenter != 0) {
+                    responseTimeCounter[0] += areaPickingCenter / indexPickingCenter;
+                    waitingTimerCounter[0] += areaQueuePickingCenter / indexPickingCenter;
+                    numberResponseTimeCounter[0] += areaPickingCenter / t.current;
+                    numberWaitingTimeCounter[0] += areaQueuePickingCenter / t.current;
+                    for (int s = EVENT_ARRIVAL_PICKING + 1; s <= EVENT_DEPARTURE_PICKING; s++) //calcolo l'utilizzazione del centro facendo la media
+                        utilizationCounter[0] += sum[s].service;
+                    utilizationCounter[0] = utilizationCounter[0] / SERVERS_PICKING;
+                    utilizationCounter[0] = (utilizationCounter[0]) / t.current;
+                }
+                if (indexPackingCenter != 0) {
+                    responseTimeCounter[1] += areaPackingCenter / indexPackingCenter;
+                    waitingTimerCounter[1] += areaQueuePackingCenter / indexPackingCenter;
+                    numberResponseTimeCounter[1] += areaPackingCenter / t.current;
+                    numberWaitingTimeCounter[1] += areaQueuePackingCenter / t.current;
+                    for (int s = EVENT_ARRIVAL_PACKING + 1; s <= EVENT_DEPARTURE_PACKING; s++) //calcolo l'utilizzazione del centro facendo la media
+                        utilizationCounter[1] += sum[s].service;
+                    utilizationCounter[1] = utilizationCounter[1] / SERVERS_PACKING;
+                    utilizationCounter[1] = (utilizationCounter[1]) / t.current;
+                }
+                if (indexQualityCenter != 0) {
+                    responseTimeCounter[2] += areaQualityCenter / indexQualityCenter;
+                    waitingTimerCounter[2] += areaQueueQualityCenter / indexQualityCenter;
+                    numberResponseTimeCounter[2] += areaQualityCenter / t.current;
+                    numberWaitingTimeCounter[2] += areaQueueQualityCenter / t.current;
+                    for (int s = EVENT_ARRIVAL_QUALITY + 1; s <= EVENT_DEPARTURE_QUALITY; s++) //calcolo l'utilizzazione del centro facendo la media
+                        utilizationCounter[2] += sum[s].service;
+                    utilizationCounter[2] = utilizationCounter[2] / SERVERS_QUALITY;
+                    utilizationCounter[2] = (utilizationCounter[2]) / t.current;
+                    goBackProb += ((double) numberFeedbackIsTrue / (double) indexQualityCenter);
 
-            }
-            if(indexSortingFragileOrders !=0 ) {
-                responseTimeCounter[3] += areaSortingFragileOrders / indexSortingFragileOrders;
-                numberResponseTimeCounter[3] += areaSortingFragileOrders / t.current;
-                waitingTimerCounter[3] += areaQueueFragilePrimeOrders / indexSortingFragileOrders;
-                waitingTimerCounter[4] += areaQueueFragileNotPrimeOrders / indexSortingFragileOrders;
-                numberWaitingTimeCounter[3] += areaQueueFragilePrimeOrders / t.current;
-                numberWaitingTimeCounter[4] += areaQueueFragileNotPrimeOrders / t.current;
-                for (int s = EVENT_ARRIVAL_SORTING_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
-                    utilizationCounter[3] += sum[s].service;
-                utilizationCounter[3] = utilizationCounter[3] / SERVERS_SORTING_FRAGILE_ORDERS;
-                utilizationCounter[3] = (utilizationCounter[3]*1000) /t.current;
-            }
-            if(indexSortingNotFragileOrders !=0 ) {
-                responseTimeCounter[4] += areaSortingNotFragileOrders / indexSortingNotFragileOrders;
-                numberResponseTimeCounter[4] += areaSortingNotFragileOrders / t.current;
-                waitingTimerCounter[5] += areaQueueNotFragilePrimeOrders / indexSortingNotFragileOrders;
-                waitingTimerCounter[6] += areaQueueNotFragileNotPrimeOrders / indexSortingNotFragileOrders;
-                numberWaitingTimeCounter[5] += areaQueueNotFragilePrimeOrders / t.current;
-                numberWaitingTimeCounter[6] += areaQueueNotFragileNotPrimeOrders / t.current;
-                for (int s = EVENT_ARRIVAL_SORTING_NOT_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
-                    utilizationCounter[4] += sum[s].service;
-                utilizationCounter[4] = utilizationCounter[4] / SERVERS_SORTING_NOT_FRAGILE_ORDERS;
-                utilizationCounter[4] = (utilizationCounter[4]*1000) /t.current;
-            }
+                }
+                if (indexSortingFragileOrders != 0) {
+                    responseTimeCounter[3] += areaSortingFragileOrders / indexSortingFragileOrders;
+                    numberResponseTimeCounter[3] += areaSortingFragileOrders / t.current;
+                    waitingTimerCounter[3] += areaQueueFragilePrimeOrders / indexSortingFragileOrders;
+                    waitingTimerCounter[4] += areaQueueFragileNotPrimeOrders / indexSortingFragileOrders;
+                    numberWaitingTimeCounter[3] += areaQueueFragilePrimeOrders / t.current;
+                    numberWaitingTimeCounter[4] += areaQueueFragileNotPrimeOrders / t.current;
+                    for (int s = EVENT_ARRIVAL_SORTING_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
+                        utilizationCounter[3] += sum[s].service;
+                    utilizationCounter[3] = utilizationCounter[3] / SERVERS_SORTING_FRAGILE_ORDERS;
+                    utilizationCounter[3] = (utilizationCounter[3]) / t.current;
+                }
+                if (indexSortingNotFragileOrders != 0) {
+                    responseTimeCounter[4] += areaSortingNotFragileOrders / indexSortingNotFragileOrders;
+                    numberResponseTimeCounter[4] += areaSortingNotFragileOrders / t.current;
+                    waitingTimerCounter[5] += areaQueueNotFragilePrimeOrders / indexSortingNotFragileOrders;
+                    waitingTimerCounter[6] += areaQueueNotFragileNotPrimeOrders / indexSortingNotFragileOrders;
+                    numberWaitingTimeCounter[5] += areaQueueNotFragilePrimeOrders / t.current;
+                    numberWaitingTimeCounter[6] += areaQueueNotFragileNotPrimeOrders / t.current;
+                    for (int s = EVENT_ARRIVAL_SORTING_NOT_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
+                        utilizationCounter[4] += sum[s].service;
+                    utilizationCounter[4] = utilizationCounter[4] / SERVERS_SORTING_NOT_FRAGILE_ORDERS;
+                    utilizationCounter[4] = (utilizationCounter[4]) / t.current;
+                }
 
-                if(batchJob == batchSize-1) {
+                if (batchJob == batchSize - 1) {
 
-                    goBackProbRecord[batchNumber] =  goBackProb / (double) batchSize;
+                    goBackProbRecord[batchNumber] = goBackProb / (double) batchSize;
 
-                    for (int j =0; j < 5; j++){
+                    for (int j = 0; j < 5; j++) {
                         //LOCALI
                         responseTimerecords[j][batchNumber] = responseTimeCounter[j] / batchSize; //(E(Ts))
                         numberResponseTimerecords[j][batchNumber] = numberResponseTimeCounter[j] / batchSize; //(E(Ns))
                         utilizationRecords[j][batchNumber] = utilizationCounter[j] / batchSize;
                         arrivals[j][batchNumber] = arrivalsCounter[j] / batchSize;
                         //globali
-                        domandaMedia[j][batchNumber] = (arrivalsCounter[j] / batchSize)*ARRIVAL*serviceTimeCenter[j];
+                        domandaMedia[j][batchNumber] = (arrivalsCounter[j] / batchSize) * ARRIVAL * serviceTimeCenter[j];
                         totalResponseTime[batchNumber] += responseTimerecords[j][batchNumber]; //calcolo i
 
 
                     }
-                    for (int j =0; j < 7; j++){
+                    for (int j = 0; j < 7; j++) {
                         waitingTimerecords[j][batchNumber] = waitingTimerCounter[j] / batchSize; //(E(Tq))
                         numberWaitingTimerecords[j][batchNumber] = numberWaitingTimeCounter[j] / batchSize;
                     }
 
-                    for (int j =0; j < 5; j++){
-                        responseTimeCounter[j] =0; //(E(Ts))
+                    for (int j = 0; j < 5; j++) {
+                        responseTimeCounter[j] = 0; //(E(Ts))
                         numberResponseTimeCounter[j] = 0; //(E(Ns))
                         utilizationCounter[j] = 0;
                         arrivalsCounter[j] = 0;
                     }
-                    for (int j =0; j < 7; j++){
-                        waitingTimerCounter[j]= 0; //(E(Tq))
-                        numberWaitingTimeCounter[j]  = 0;
+                    for (int j = 0; j < 7; j++) {
+                        waitingTimerCounter[j] = 0; //(E(Tq))
+                        numberWaitingTimeCounter[j] = 0;
                     }
-                goBackProb = 0.0;
-                batchJob = 0; //passo al prossimo batch e salvo le statistiche nel batch associato
+                    goBackProb = 0.0;
+                    batchJob = 0; //passo al prossimo batch e salvo le statistiche nel batch associato
+                }
             }
             if(flag == 0)
                if(event[0].x != 0)
@@ -612,39 +636,40 @@ public class Simulator {
                     cond = true;
                 else
                     cond = false;
+
         } //end while
         DecimalFormat f = new DecimalFormat("###0.0000000");
 
         System.out.println("----------------------------------------------------");
-
-        for (int j =0; j < 5; j++){
-            System.out.println("\n");
-            System.out.println(centerNames[j]);
-            System.out.println("E(Ts)");
-            estimate.main(responseTimerecords[j]);
-            System.out.println("E(Ns)");
-            estimate.main(numberResponseTimerecords[j]);
-            System.out.println("E(utilizzazione)");
-            estimate.main(utilizationRecords[j]);
-        }
-        for (int j =0; j < 7; j++){
+        if(flag == 0) {
+            for (int j = 0; j < 5; j++) {
+                System.out.println("\n");
+                System.out.println(centerNames[j]);
+                System.out.println("E(Ts)");
+                estimate.main(responseTimerecords[j]);
+                System.out.println("E(Ns)");
+                estimate.main(numberResponseTimerecords[j]);
+                System.out.println("E(utilizzazione)");
+                estimate.main(utilizationRecords[j]);
+            }
+        /*for (int j =0; j < 7; j++){
             System.out.println("\n");
             System.out.println(centerNamesQueue[j]);
             System.out.println("E(Tq)");
             estimate.main(waitingTimerecords[j]);
             System.out.println("E(Nq)");
             estimate.main(numberWaitingTimerecords[j]);
-        }
+        }*/
 
-        SwingUtilities.invokeLater(() -> {
-            for (int i =0;i < 5; i++) {
-                grafico[i] = new plotter(centerNames[i],"tempo di riposta", responseTimerecords, this.k, this.batchSize, i);
-                grafico[i].setSize(800, 600);
-                grafico[i].setLocationRelativeTo(null);
-                grafico[i].setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                grafico[i].setVisible(true);
-            }
-        });
+            SwingUtilities.invokeLater(() -> {
+                for (int i = 0; i < 5; i++) {
+                    grafico[i] = new plotter(centerNames[i], "tempo di riposta", responseTimerecords, this.k, this.batchSize, i);
+                    grafico[i].setSize(800, 600);
+                    grafico[i].setLocationRelativeTo(null);
+                    grafico[i].setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                    grafico[i].setVisible(true);
+                }
+            });
 
         /*SwingUtilities.invokeLater(() -> {
                 plotter graficoRespTimeTot = new plotter("sistema","tempo di risposta totale", totalResponseTime, this.k, this.batchSize);
@@ -654,17 +679,17 @@ public class Simulator {
             graficoRespTimeTot.setVisible(true);
 
         });*/
-        SwingUtilities.invokeLater(() -> {
-            plotter graficoGoBackProb = new plotter("","probabilità ordine difettoso", goBackProbRecord, this.k, this.batchSize);
-            graficoGoBackProb.setSize(800, 600);
-            graficoGoBackProb.setLocationRelativeTo(null);
-            graficoGoBackProb.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            graficoGoBackProb.setVisible(true);
+            SwingUtilities.invokeLater(() -> {
+                plotter graficoGoBackProb = new plotter("", "probabilità ordine difettoso", goBackProbRecord, this.k, this.batchSize);
+                graficoGoBackProb.setSize(800, 600);
+                graficoGoBackProb.setLocationRelativeTo(null);
+                graficoGoBackProb.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                graficoGoBackProb.setVisible(true);
 
-        });
-        /*
+            });
+        }
         //stampo i risultati
-        System.out.println("numero di job nel centro di picking: " + numberJobsPickingCenter);
+        /*System.out.println("numero di job nel centro di picking: " + numberJobsPickingCenter);
         System.out.println("partenze dal centro di picking: " + indexPickingCenter);
         System.out.println("numero di job nel centro di packing: " + numberJobsPackingCenter);
         System.out.println("partenze dal centro di packing: " + indexPackingCenter);
@@ -679,94 +704,125 @@ public class Simulator {
         System.out.println("partenze di tipo PRIME nel centro di smistamento ordini NON fragili: " + indexSortingNotFragilePrimeOrders);
         System.out.println("partenze di tipo NON PRIME nel centro di smistamento ordini NON fragili: " + indexSortingNotFragileNotPrimeOrders);
         System.out.println("numeri di job non passati: " +numberFeedbackIsTrue);
-        System.out.println("PERCENTUALE DI JOB NON PASSATI: " +f.format((double ) 100*(numberFeedbackIsTrue/indexQualityCenter)));
-        */
+        System.out.println("PERCENTUALE DI JOB NON PASSATI: " +f.format((double ) 100*(numberFeedbackIsTrue/indexQualityCenter)));*/
         System.out.println("----------------------------------------------------");
-        //nel nodo
-        /*System.out.println("TEMPI E QUANTITA NEL NODO");
-        System.out.println("\nfor " + indexPickingCenter + " jobs the service node PICKING's statistics are:\n");
-        System.out.println("  avg interarrivals .. =   " + f.format(event[0].t / indexPickingCenter)); //E(interrarrivo)
-        System.out.println("  avg wait (E(TS)) ... =   " + f.format(areaPickingCenter / indexPickingCenter));  //E(Ts)
-        System.out.println("  avg # in node ...... =   " + f.format(areaPickingCenter / t.current)); //E(Ns)
+        if(flag !=0){
+            pickingResponseTime = areaPickingCenter / indexPickingCenter;
+            packingResponseTime = areaPackingCenter / indexPackingCenter;
+            qualityResponseTime = areaQualityCenter / indexQualityCenter;
+            fragileSortingResponseTime = areaSortingFragileOrders / indexSortingFragileOrders;
+            notFragileSortingResponseTime = areaSortingNotFragileOrders / indexSortingNotFragileOrders;
+            totalResponseTime[0] = pickingResponseTime + packingResponseTime + qualityResponseTime + fragileSortingResponseTime ; //con fragile
+            totalResponseTime[1] = pickingResponseTime + packingResponseTime + qualityResponseTime+ notFragileSortingResponseTime;//senza fragile
+            for (int s = EVENT_ARRIVAL_SORTING_NOT_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
+                utilizationCounter[4] += sum[s].service;
+            utilizationCounter[4] = utilizationCounter[4] / SERVERS_SORTING_NOT_FRAGILE_ORDERS;
+            utilizationCounter[4] = (utilizationCounter[4]) / t.current;
+            for (int s = EVENT_ARRIVAL_SORTING_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
+                utilizationCounter[3] += sum[s].service;
+            utilizationCounter[3] = utilizationCounter[3] / SERVERS_SORTING_FRAGILE_ORDERS;
+            utilizationCounter[3] = (utilizationCounter[3]) / t.current;
+            for (int s = EVENT_ARRIVAL_QUALITY + 1; s <= EVENT_DEPARTURE_QUALITY; s++) //calcolo l'utilizzazione del centro facendo la media
+                utilizationCounter[2] += sum[s].service;
+            utilizationCounter[2] = utilizationCounter[2] / SERVERS_QUALITY;
+            utilizationCounter[2] = (utilizationCounter[2]) / t.current;
+            for (int s = EVENT_ARRIVAL_PACKING + 1; s <= EVENT_DEPARTURE_PACKING; s++) //calcolo l'utilizzazione del centro facendo la media
+                utilizationCounter[1] += sum[s].service;
+            utilizationCounter[1] = utilizationCounter[1] / SERVERS_PACKING;
+            utilizationCounter[1] = (utilizationCounter[1]) / t.current;
+            for (int s = EVENT_ARRIVAL_PICKING + 1; s <= EVENT_DEPARTURE_PICKING; s++) //calcolo l'utilizzazione del centro facendo la media
+                utilizationCounter[0] += sum[s].service;
+            utilizationCounter[0] = utilizationCounter[0] / SERVERS_PICKING;
+            utilizationCounter[0] = (utilizationCounter[0]) / t.current;
 
-        /*System.out.println("\nfor " + indexPackingCenter + " jobs the service node PACKING's statistics are:\n");
-        //System.out.println("  avg interarrivals .. =   " + f.format( / indexPackingCenter)); //E(interrarrivo)
-        System.out.println("  avg wait ........... =   " + f.format(areaPackingCenter / indexPackingCenter));  //E(Ts)
+            responseTimeCounter[0] = pickingResponseTime;
+            responseTimeCounter[1] = packingResponseTime;
+            responseTimeCounter[2] = qualityResponseTime;
+            responseTimeCounter[3] = fragileSortingResponseTime;
+            responseTimeCounter[4] = notFragileSortingResponseTime;
+
+
+            //nel nodo
+        System.out.println("TEMPI E QUANTITA NEL NODO");
+        System.out.println("\nfor " + indexPickingCenter + " jobs the service node PICKING's statistics are:\n");
+        //System.out.println("  avg interarrivals .. =   " + f.format(event[0].t / indexPickingCenter)); //E(interrarrivo)
+        System.out.println("  avg wait (E(TS)) ... =   " + f.format(pickingResponseTime));  //E(Ts)
+        System.out.println("  avg # in node ...... =   " + f.format(areaPickingCenter / t.current)); //E(Ns)
+        System.out.println("  utilization..... =   " + f.format(utilizationCounter[0]));
+
+        System.out.println("\nfor " + indexPackingCenter + " jobs the service node PACKING's statistics are:\n");
+        System.out.println("  avg wait ........... =   " + f.format(packingResponseTime));  //E(Ts)
         System.out.println("  avg # in node ...... =   " + f.format(areaPackingCenter / t.current)); //E(Ns)
+        System.out.println("  utilization..... =   " + f.format(utilizationCounter[1]));
 
         System.out.println("\nfor " + indexQualityCenter + " jobs the service node QUALITY CENTER's statistics are:\n");
-        //System.out.println("  avg interarrivals .. =   " + f.format( / indexQualityCenter)); //E(interrarrivo)
-        System.out.println("  avg wait ........... =   " + f.format(areaQualityCenter / indexQualityCenter));  //E(Ts)
+        System.out.println("  avg wait ........... =   " + f.format(qualityResponseTime));  //E(Ts)
         System.out.println("  avg # in node ...... =   " + f.format(areaQualityCenter / t.current)); //E(Ns)
+            System.out.println("  utilization..... =   " + f.format(utilizationCounter[2]));
 
         System.out.println("\nfor " + indexSortingFragileOrders + " jobs the service node SORTING FRAGILE ORDERS's statistics are:\n");
-       // System.out.println("  avg interarrivals .. =   " + f.format( / indexSortingFragileOrders)); //E(interrarrivo)
-        System.out.println("  avg wait ........... =   " + f.format(areaSortingFragileOrders / indexSortingFragileOrders));  //E(Ts)
+        System.out.println("  avg wait ........... =   " + f.format(fragileSortingResponseTime));  //E(Ts)
         System.out.println("  avg # in node ...... =   " + f.format(areaSortingFragileOrders / t.current)); //E(Ns)
+            System.out.println("  utilization..... =   " + f.format(utilizationCounter[3]));
 
         System.out.println("\nfor " + indexSortingNotFragileOrders + " jobs the service node SORTING RESISTENT ORDERS's statistics are:\n");
-        //System.out.println("  avg interarrivals .. =   " + f.format(() / indexSortingNotFragileOrders)); //E(interrarrivo)
-        System.out.println("  avg wait ........... =   " + f.format(areaSortingNotFragileOrders / indexSortingNotFragileOrders));  //E(Ts)
+        System.out.println("  avg wait ........... =   " + f.format(notFragileSortingResponseTime));  //E(Ts)
         System.out.println("  avg # in node ...... =   " + f.format(areaSortingNotFragileOrders / t.current)); //E(Ns)*/
+        System.out.println("  utilization..... =   " + f.format(utilizationCounter[4]));
 
-        //for (int s = EVENT_ARRIVAL_PICKING + 1; s <= EVENT_DEPARTURE_PICKING; s++)          /* adjust area to calculate */
-            //areaPickingCenter -= sum[s].service;              /* averages for the queue   */
+        System.out.println("\nTEMPI E QUANTITA NEL SISTEMA");
+        System.out.println("  avg wait ........... =   " + f.format(totalResponseTime[0]));  //E(Ts)
 
-       // for (int s = EVENT_ARRIVAL_PACKING + 1; s <= EVENT_DEPARTURE_PACKING; s++)          /* adjust area to calculate */
-            //areaPackingCenter -= sum[s].service;              /* averages for the queue   */
+            for (int s = EVENT_ARRIVAL_PICKING + 1; s <= EVENT_DEPARTURE_PICKING; s++) //calcolo l'utilizzazione del centro facendo la media
+                areaPickingCenter -= sum[s].service;
+            for (int s = EVENT_ARRIVAL_PACKING + 1; s <= EVENT_DEPARTURE_PACKING; s++) //calcolo l'utilizzazione del centro facendo la media
+                areaPackingCenter -= sum[s].service;
+            for (int s = EVENT_ARRIVAL_QUALITY + 1; s <= EVENT_DEPARTURE_QUALITY; s++) //calcolo l'utilizzazione del centro facendo la media
+                areaQualityCenter -= sum[s].service;
+            for (int s = EVENT_ARRIVAL_SORTING_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
+                areaSortingFragileOrders -= sum[s].service;
+            for (int s = EVENT_ARRIVAL_SORTING_NOT_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
+                areaSortingNotFragileOrders -= sum[s].service;
 
-        //for (int s = EVENT_ARRIVAL_QUALITY +1 ; s <= EVENT_DEPARTURE_QUALITY; s++)          /* adjust area to calculate */
-            //areaQualityCenter -= sum[s].service;
+            //nella coda
+            System.out.println("\nTEMPI E QUANTITA NELLA CODA");
+            System.out.println("PICKING CENTER");
+            System.out.println("  E(Tq) .......... =   " + f.format(areaPickingCenter / indexPickingCenter));
+            System.out.println("  E(Nq) ..... =   " + f.format(areaPickingCenter / t.current));
 
-        //for (int s = EVENT_ARRIVAL_SORTING_FRAGILE_NOT_PRIME_ORDERS+1; s <= EVENT_DEPARTURE_SORTING_FRAGILE_ORDERS; s++) {          /* adjust area to calculate */
-            //areaSortingFragileNotPrimeOrders -= sum[s].service;
-            //areaSortingFragilePrimeOrders -= sum[s].service;
-            //areaSortingFragileOrders -= sum[s].service;
-        //}
+            System.out.println("\nPACKING CENTER");
+            System.out.println("  E(Tq) .......... =   " + f.format(areaPackingCenter / indexPackingCenter));
+            System.out.println("  E(Nq) ..... =   " + f.format(areaPackingCenter / t.current));
 
-        ///for (int s = EVENT_ARRIVAL_SORTING_NOT_FRAGILE_NOT_PRIME_ORDERS+1; s <= EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS; s++){          /* adjust area to calculate */
-            //areaSortingNotFragilePrimeOrders -= sum[s].service;              /* averages for the queue   */
-            //areaSortingNotFragileNotPrimeOrders -= sum[s].service;
-            //areaSortingNotFragileOrders -= sum[s].service;
-        //}
-        //nella coda
-        System.out.println("\nTEMPI E QUANTITA NELLA CODA");
-        System.out.println("PICKING CENTER");
-        System.out.println("  E(Tq) .......... =   " + f.format(areaPickingCenter / indexPickingCenter));
-        System.out.println("  E(Nq) ..... =   " + f.format(areaPickingCenter / t.current));
+            System.out.println("\nQUALITY CENTER");
+            System.out.println("  E(Tq) .......... =   " + f.format(areaQualityCenter / indexQualityCenter));
+            System.out.println("  E(Nq) ..... =   " + f.format(areaQualityCenter / t.current));
 
-        System.out.println("\nPACKING CENTER");
-        System.out.println("  E(Tq) .......... =   " + f.format(areaPackingCenter / indexPackingCenter));
-        System.out.println("  E(Nq) ..... =   " + f.format(areaPackingCenter / t.current));
+            System.out.println("\nFRAGILE ORDERS CENTER");
+            System.out.println("  E(Tq) .......... =   " + f.format(areaSortingFragileOrders / indexSortingFragileOrders));
+            System.out.println("  E(Nq) ..... =   " + f.format(areaSortingFragileOrders / t.current));
+            /*System.out.println("Prime queue");
+            System.out.println("  E(Tq) .......... =   " + f.format(areaSortingFragilePrimeOrders / indexSortingFragilePrimeOrders));
+            System.out.println("  E(Nq) ..... =   " + f.format(areaSortingFragilePrimeOrders / t.current));
+            System.out.println("Not Prime queue");
+            System.out.println("  E(Tq) .......... =   " + f.format(areaSortingFragileNotPrimeOrders / indexSortingFragileNotPrimeOrders));
+            System.out.println("  E(Nq) ..... =   " + f.format(areaSortingFragileNotPrimeOrders / t.current));*/
 
-        System.out.println("\nQUALITY CENTER");
-        System.out.println("  E(Tq) .......... =   " + f.format(areaQualityCenter / indexQualityCenter));
-        System.out.println("  E(Nq) ..... =   " + f.format(areaQualityCenter / t.current));
+            System.out.println("\nRESISTENT ORDERS CENTER");
+            System.out.println("  E(Tq) .......... =   " + f.format(areaSortingNotFragileOrders / indexSortingNotFragileOrders));
+            System.out.println("  E(Nq) ..... =   " + f.format(areaSortingNotFragileOrders / t.current));
+            /*System.out.println("Prime queue");
+            System.out.println("  E(Tq) .......... =   " + f.format(areaSortingNotFragilePrimeOrders / indexSortingNotFragilePrimeOrders));
+            System.out.println("  E(Nq) ..... =   " + f.format(areaSortingNotFragilePrimeOrders / t.current));
+            System.out.println("Not Prime queue");
+            System.out.println("  E(Tq) .......... =   " + f.format(areaSortingNotFragileNotPrimeOrders / indexSortingNotFragileNotPrimeOrders));
+            System.out.println("  E(Nq) ..... =   " + f.format(areaSortingNotFragileNotPrimeOrders / t.current));*/
+        }
 
-        System.out.println("\nFRAGILE ORDERS CENTER");
-        System.out.println("  E(Tq) .......... =   " + f.format(areaSortingFragileOrders / indexSortingFragileOrders));
-        System.out.println("  E(Nq) ..... =   " + f.format(areaSortingFragileOrders / t.current));
-        System.out.println("Prime queue");
-        System.out.println("  E(Tq) .......... =   " + f.format(areaSortingFragilePrimeOrders / indexSortingFragilePrimeOrders));
-        System.out.println("  E(Nq) ..... =   " + f.format(areaSortingFragilePrimeOrders / t.current));
-        System.out.println("Not Prime queue");
-        System.out.println("  E(Tq) .......... =   " + f.format(areaSortingFragileNotPrimeOrders / indexSortingFragileNotPrimeOrders));
-        System.out.println("  E(Nq) ..... =   " + f.format(areaSortingFragileNotPrimeOrders / t.current));
-
-        System.out.println("\nRESISTENT ORDERS CENTER");
-        System.out.println("  E(Tq) .......... =   " + f.format(areaSortingNotFragileOrders / indexSortingNotFragileOrders));
-        System.out.println("  E(Nq) ..... =   " + f.format(areaSortingNotFragileOrders / t.current));
-        System.out.println("Prime queue");
-        System.out.println("  E(Tq) .......... =   " + f.format(areaSortingNotFragilePrimeOrders / indexSortingNotFragilePrimeOrders));
-        System.out.println("  E(Nq) ..... =   " + f.format(areaSortingNotFragilePrimeOrders / t.current));
-        System.out.println("Not Prime queue");
-        System.out.println("  E(Tq) .......... =   " + f.format(areaSortingNotFragileNotPrimeOrders / indexSortingNotFragileNotPrimeOrders));
-        System.out.println("  E(Nq) ..... =   " + f.format(areaSortingNotFragileNotPrimeOrders / t.current));
     } //end main
 
     private double getServiceMultiServer(Rngs r, int streamIndex, int center) {
         r.selectStream(streamIndex);
-        Rvms rvms = new Rvms();
         double m= 0.0;
         double std = 0;
         switch (center) {
@@ -794,7 +850,7 @@ public class Simulator {
                 new Exception("Errore nella selezione dello stream");
                 break;
         }
-        return rvms.idfNormal(m, std,r.random());
+        return TruncatedNormalDistribution.of(m,std,LOWER_BOUND_NORMAL,60*m).inverseCumulativeProbability(r.random());
 
     }
 
@@ -806,7 +862,7 @@ public class Simulator {
         r.selectStream(0 + streamIndex);
 
         Rvms rvms = new Rvms();
-        //int index = utils.fasciaOrariaSwitch(listaFasciaOraria, currentTime);
+        //int index = utils.fasciaOrariaSwitch(listaFasciaOraria,);
         sarrival += rvms.idfPoisson(ARRIVAL, r.random());
         return (sarrival);
     }
@@ -828,7 +884,7 @@ public class Simulator {
         int e;
         int i = 0;
 
-        while (event[i].x == 0 )       /* find the index of the first 'active' */
+        while (event[i].x == 0 && i < EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS)       /* find the index of the first 'active' */
             i++;                        /* element in the event list            */
 
         e = i;
@@ -875,7 +931,7 @@ public class Simulator {
                 break;
         }
 
-        while (event[i].x == 1 )       /* find the index of the first available */
+        while (event[i].x == 1)       /* find the index of the first available */
             i++;
         s = i;
         while (i < server) {         /* now, check the others to find which   */

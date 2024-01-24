@@ -1,20 +1,20 @@
 package model;
 
 public class SimulatorParameters {
-    public static final double ARRIVAL   = 0.66666;      //(ARRIVAL = 2.0, 0.66 lambda = 0.5, 1.5)
+    public static final double ARRIVAL   = 2.0;      //(ARRIVAL = 2.0, 0.66 lambda = 0.5, 1.5)
     public static final double START   = 0.0;            /* initial (open the door)        */
-    public static final double STOP_BATCH    = 131072; /* close the door batch*/
-
+    public static final double STOP_BATCH    = 131072; /* close the door infinite horizon*/
+    public static final double STOP    = 86400; /* close the door finite horizone*/
     //probabilities
     public static final double QUALITY_CENTER_PROB = 0.33;
     public static final double ORDER_PRIME = 0.62;
     public static final double SORTING_FRAGILE_CENTER = 0.5;
     //SERVERS
-    public static final int    SERVERS_PICKING = 46;              /* number of servers        60-70-80      ARE DEPARTURES*/
-    public static final int   SERVERS_PACKING = 54;              /* number of servers        20-30-40      */
-    public static final int    SERVERS_QUALITY = 103;
-    public static final int    SERVERS_SORTING_FRAGILE_ORDERS = 62;
-    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS = 58;
+    public static final int    SERVERS_PICKING = 28;              /* number of servers        60-70-80      ARE DEPARTURES*/
+    public static final int   SERVERS_PACKING = 37;              /* number of servers        20-30-40      */
+    public static final int    SERVERS_QUALITY = 44;
+    public static final int    SERVERS_SORTING_FRAGILE_ORDERS = 30;
+    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS = 30;
 
     //events
     public static final int EVENT_ARRIVAL_PICKING = 0;
@@ -43,11 +43,12 @@ public class SimulatorParameters {
     public static final double SERVICE_TIME_QUALITY = 150;//0.0066666
     public static final double SERVICE_TIME_SORTING_FRAGILE_ORDERS = 50; //0.02
     public static final double SERVICE_TIME_SORTING_NOT_FRAGILE_ORDERS = 50;
-    public static final double STD_SERVICE_TIME_PICKING = 20.0;
-    public static final double STD_SERVICE_TIME_PACKING = 30.0;
+    public static final double STD_SERVICE_TIME_PICKING = 3.0;
+    public static final double STD_SERVICE_TIME_PACKING = 5.0;
     public static final double STD_SERVICE_TIME_QUALITY = 50.0;
-    public static final double STD_SERVICE_SORTING_FRAGILE_ORDERS= 18.7;
-    public static final double STD_SERVICE_SORTING_NOT_FRAGILE_ORDERS = 15.1;
-    public static final double BERNOULLI_PROB_SUCCESS= (1.0/ (double) (SERVERS_PICKING+ SERVERS_PACKING));
+    public static final double STD_SERVICE_SORTING_FRAGILE_ORDERS= 10.7;
+    public static final double STD_SERVICE_SORTING_NOT_FRAGILE_ORDERS = 10.1;
+    public static final double BERNOULLI_PROB_SUCCESS= 1-  (1.0/ (double) (SERVERS_PICKING+ SERVERS_PACKING));
+    public static final int LOWER_BOUND_NORMAL = 0;
 
 }

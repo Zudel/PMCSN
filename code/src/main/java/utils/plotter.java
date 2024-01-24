@@ -5,6 +5,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -38,7 +39,11 @@ public class plotter extends JFrame {
                 false
         );
         XYPlot plot = (XYPlot) chart.getPlot();
-        plot.setBackgroundPaint(new Color(204, 204, 255)); // Imposta il colore di sfondo viola
+        plot.setBackgroundPaint(new Color(204, 204, 204));
+        plot.setBackgroundPaint(Color.WHITE); // Imposta il colore di sfondo del grafico a bianco
+        // Impostare la larghezza della linea
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
+        renderer.setSeriesStroke(0, new BasicStroke(2.0f)); // Imposta la larghezza della linea della serie 0
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(560, 370));
         setContentPane(chartPanel);
@@ -72,11 +77,15 @@ public class plotter extends JFrame {
                 false
         );
         XYPlot plot = (XYPlot) chart.getPlot();
-        plot.setBackgroundPaint(new Color(204, 204, 255)); // Imposta il colore di sfondo viola
+        plot.setBackgroundPaint(new Color(204, 204, 204));
+        plot.setBackgroundPaint(Color.WHITE); // Imposta il colore di sfondo del grafico a bianco
+        // Impostare la larghezza della linea
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
+        renderer.setSeriesStroke(0, new BasicStroke(2.0f)); // Imposta la larghezza della linea della serie 0
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(560, 370));
         setContentPane(chartPanel);
-        File file = new File("C:\\Users\\Roberto\\Desktop\\sistema");
+        File file = new File("C:\\Users\\Roberto\\Desktop\\difetto.png");
         try {
             saveChartAsPNG(file, chartPanel.getChart(), 560, 370);
         } catch (IOException e) {
