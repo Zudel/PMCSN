@@ -71,7 +71,7 @@ public class Simulator {
     private double stop;
     private  int rep;
     private Rngs r = new Rngs();
-    private CSVLibrary[] csvStatistics;
+    private  static String[] csvNames;
 
 
     //static List<FasciaOraria> listaFasciaOraria = utils.LeggiCSV("C:\\Users\\Roberto\\Documents\\GitHub\\PMCSN\\code\\src\\main\\resources\\distribuzioneOrdiniGiornalieri.csv");
@@ -104,7 +104,7 @@ public class Simulator {
 
     }
 
-    public Simulator(int batchSize, int k, int flag, int j, Rngs r, CSVLibrary[] csvStatistics) {
+    public Simulator(int batchSize, int k, int flag, int j, Rngs r, String[] csvNames) {
         this.batchSize = batchSize;
         //System.out.println("batchSize: "+ batchSize);
         this.k = k;
@@ -112,7 +112,7 @@ public class Simulator {
         this.flag = flag;
         this.rep = j;
         this.r = r;
-        this.csvStatistics = csvStatistics;
+        this.csvNames = csvNames;
         responseTimerecords = new double[5][k]; //ongi riga corrisponde a un centro, ogni colonna corrisponde alla media di un batch
         waitingTimerecords = new double[7][k];
         numberResponseTimerecords = new double[5][k];
@@ -707,6 +707,11 @@ public class Simulator {
         System.out.println("PERCENTUALE DI JOB NON PASSATI: " +f.format((double ) 100*(numberFeedbackIsTrue/indexQualityCenter)));*/
         System.out.println("----------------------------------------------------");
         if(flag !=0){
+            double[] pickingStatistics = new double[3];
+            double[] packingStatistics = new double[3];
+            double[] qualityStatistics = new double[3];
+            double[] fragileStatistics = new double[3];
+            double[] resistentStatistics = new double[3];
             pickingResponseTime = areaPickingCenter / indexPickingCenter;
             packingResponseTime = areaPackingCenter / indexPackingCenter;
             qualityResponseTime = areaQualityCenter / indexQualityCenter;
@@ -735,12 +740,16 @@ public class Simulator {
             utilizationCounter[0] = utilizationCounter[0] / SERVERS_PICKING;
             utilizationCounter[0] = (utilizationCounter[0]) / t.current;
 
-            responseTimeCounter[0] = pickingResponseTime;
-            responseTimeCounter[1] = packingResponseTime;
-            responseTimeCounter[2] = qualityResponseTime;
-            responseTimeCounter[3] = fragileSortingResponseTime;
-            responseTimeCounter[4] = notFragileSortingResponseTime;
-
+            pickingStatistics[0] = pickingResponseTime;
+            packingStatistics[0] = packingResponseTime;
+            qualityStatistics[0] = qualityResponseTime;
+            fragileStatistics[0] = fragileSortingResponseTime;
+            resistentStatistics[0] = notFragileSortingResponseTime;
+            pickingStatistics[2] = utilizationCounter[0];
+            packingStatistics[2] = utilizationCounter[1];
+            qualityStatistics[2] = utilizationCounter[2];
+            fragileStatistics[2] = utilizationCounter[3];
+            resistentStatistics[2] = utilizationCounter[4];
 
             //nel nodo
         System.out.println("TEMPI E QUANTITA NEL NODO");
@@ -783,6 +792,18 @@ public class Simulator {
                 areaSortingFragileOrders -= sum[s].service;
             for (int s = EVENT_ARRIVAL_SORTING_NOT_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
                 areaSortingNotFragileOrders -= sum[s].service;
+            //adjustArea();
+            pickingStatistics[1] = areaPickingCenter / indexPickingCenter;
+            packingStatistics[1] = areaPackingCenter / indexPackingCenter;
+            qualityStatistics[1] = areaQualityCenter / indexQualityCenter;
+            fragileStatistics[1] = areaSortingFragileOrders / indexSortingFragileOrders;
+            resistentStatistics[1] = areaSortingNotFragileOrders / indexSortingNotFragileOrders;
+
+            CSVLibrary.writeToCsv(pickingStatistics,csvNames[0]);
+            CSVLibrary.writeToCsv(packingStatistics,csvNames[1]);
+            CSVLibrary.writeToCsv(qualityStatistics,csvNames[2]);
+            CSVLibrary.writeToCsv(fragileStatistics,csvNames[3]);
+            CSVLibrary.writeToCsv(resistentStatistics,csvNames[4]);
 
             //nella coda
             System.out.println("\nTEMPI E QUANTITA NELLA CODA");
@@ -817,9 +838,15 @@ public class Simulator {
             System.out.println("Not Prime queue");
             System.out.println("  E(Tq) .......... =   " + f.format(areaSortingNotFragileNotPrimeOrders / indexSortingNotFragileNotPrimeOrders));
             System.out.println("  E(Nq) ..... =   " + f.format(areaSortingNotFragileNotPrimeOrders / t.current));*/
+
+
+
         }
 
     } //end main
+
+    private void adjustArea() {
+    }
 
     private double getServiceMultiServer(Rngs r, int streamIndex, int center) {
         r.selectStream(streamIndex);
@@ -851,7 +878,6 @@ public class Simulator {
                 break;
         }
         return TruncatedNormalDistribution.of(m,std,LOWER_BOUND_NORMAL,60*m).inverseCumulativeProbability(r.random());
-
     }
 
     private double getArrival(Rngs r, int streamIndex) {

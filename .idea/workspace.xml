@@ -6,37 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="73dcb141-e879-4a17-87af-80d7f7942b65" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/java/Replication.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/Simulator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/SteadyStateSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/SteadyStateSimulation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/WriteDoubleListToFile.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/plotter.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/plotter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/prima conf/Resistent_RT_PrimaFascia.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/prima conf/difetto_primaFascia.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/prima conf/fragile_RT_Prima fascia.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/prima conf/packing_TR_Primafascia.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/prima conf/picking_TR_Primafascia.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/prima conf/quality_RT_primaFascia.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/TR_totale.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/difetto_migliore.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/fragile_RTmigliore.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/packing_RT_migliore.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/picking_RT_milgiore.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/qualityRTMigliore.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/prima fascia/seconda conf/resistent_RTmigliore.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/difetto.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/fragile_RT.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/packing_RT.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/picking_RT.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/quality_RT.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/resistent_RT.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/seconda conf/difetto.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/seconda conf/fragile_RTMeglio.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/seconda conf/packing_RTMeglio.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/seconda conf/picking_RTMeglio.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/seconda conf/quality_RTMeglio.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/orizzonte infinito/seconda fascia/seconda conf/resistent_RTMeglio.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/CSVLibrary.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/CSVLibrary.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/Estimate.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/Estimate.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -251,7 +224,8 @@
       <workItem from="1706015990948" duration="6551000" />
       <workItem from="1706037875995" duration="4274000" />
       <workItem from="1706093341574" duration="3051000" />
-      <workItem from="1706104982542" duration="17468000" />
+      <workItem from="1706104982542" duration="17513000" />
+      <workItem from="1706172067514" duration="10339000" />
     </task>
     <servers />
   </component>

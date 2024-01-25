@@ -1,8 +1,8 @@
 import mathLib.Rngs;
 import utils.CSVLibrary;
+import utils.Estimate;
 
 import java.io.IOException;
-
 public class SteadyStateSimulation {
     private static int batchSize=1024;
     private static int k=128;
@@ -14,24 +14,24 @@ public class SteadyStateSimulation {
     public static void main(String[] args) throws IOException {
         Rngs r = new Rngs();
         Simulator sim;
+        Estimate estimate = new Estimate();
         if(flag != 0){
             r.plantSeeds(12986789);
             String[] csvNames = new String[]{"picking.csv","packing.csv","quality.csv","fragile.csv","resistent.csv"};
-            CSVLibrary[] csvStatistics = new CSVLibrary[5];
-            for (int j =0;j < 5;j++ ){
-                csvStatistics[j] = new CSVLibrary(csvNames[j]);
-            }
-            for (int j=0; j < k; j++) {
-                sim = new Simulator(batchSize, k, flag, j, r, csvStatistics);
+            for (int j=0; j < 128; j++) {
+                sim = new Simulator(batchSize, k, flag, j, r, csvNames);
                 sim.main();
             }
+            double[] array = CSVLibrary.readCSVFile(0,csvNames[0]);
+            estimate.main(array);
+            /*for (int j=0; j < 128; j++) {
+                System.out.println(array[j]);
+            }*/
         }
         else {
             sim = new Simulator(batchSize, k, flag);
             sim.main();
         }
-
-
 
 
     }

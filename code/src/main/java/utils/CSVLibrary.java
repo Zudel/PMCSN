@@ -7,34 +7,24 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CSVLibrary {
-    String csvName;
-    public CSVLibrary(String csvName) throws IOException {
-        this.csvName =csvName;
+    private CSVLibrary() throws IOException {
     }
-    public void writeToCsv(double[] data) {
+    public static void writeToCsv(double[] data, String csvName) {
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvName))) {
-            // Scrivi l'header, se necessario
-             writer.write("E(Ts),E(Ns),rho,E(Tq),E(Nq)"); // Sostituisci con i nomi delle colonne
-
-            // Vai a capo dopo l'header
-            // writer.newLine();
-
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvName,true))) {
             // Scrivi i dati dell'array nel file CSV
             for (double value : data) {
                 writer.write(String.valueOf(value));
                 writer.write(",");
             }
-
-            // Vai a capo alla fine di ogni riga
             writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public Double[] readCSVFile() {
+    public static double[] readCSVFile(int index, String csvName) {
         CSVReader reader = null;
-        Double[] arrayValues = new Double[128];
+        double[] arrayValues = new double[128];
         try {
             reader = new CSVReader(new FileReader(csvName));
         } catch (FileNotFoundException e) {
@@ -47,10 +37,14 @@ public class CSVLibrary {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        allRows.remove(0);
+        int i =0;
+        //allRows.remove(0);
         for (String[] row : allRows) { //prendo una riga
-            System.out.println(row[1]);
+            //System.out.println(row[index]);
             System.out.println(Arrays.toString(row));
+            arrayValues[i] = Double.valueOf(row[index]);
+            i++;
+            if(i == 128) break;
         }
         return arrayValues;
     }
