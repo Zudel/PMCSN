@@ -6,10 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="73dcb141-e879-4a17-87af-80d7f7942b65" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/Simulator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/SteadyStateSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/SteadyStateSimulation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/model/SimulatorParameters.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/CSVLibrary.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/CSVLibrary.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/Estimate.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/Estimate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/src/main/java/utils/utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/src/main/java/utils/utils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -226,6 +229,7 @@
       <workItem from="1706093341574" duration="3051000" />
       <workItem from="1706104982542" duration="17513000" />
       <workItem from="1706172067514" duration="10339000" />
+      <workItem from="1706259173124" duration="7067000" />
     </task>
     <servers />
   </component>

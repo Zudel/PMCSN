@@ -41,11 +41,11 @@ public class CSVLibrary {
         //allRows.remove(0);
         for (String[] row : allRows) { //prendo una riga
             //System.out.println(row[index]);
-            System.out.println(Arrays.toString(row));
             arrayValues[i] = Double.valueOf(row[index]);
             i++;
             if(i == 128) break;
         }
+
         return arrayValues;
     }
 }

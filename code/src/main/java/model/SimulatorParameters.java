@@ -5,16 +5,28 @@ public class SimulatorParameters {
     public static final double START   = 0.0;            /* initial (open the door)        */
     public static final double STOP_BATCH    = 131072; /* close the door infinite horizon*/
     public static final double STOP    = 86400; /* close the door finite horizone*/
+    public static final int REPLICATION = 128;
     //probabilities
     public static final double QUALITY_CENTER_PROB = 0.33;
     public static final double ORDER_PRIME = 0.62;
     public static final double SORTING_FRAGILE_CENTER = 0.5;
     //SERVERS
-    public static final int    SERVERS_PICKING = 28;              /* number of servers        60-70-80      ARE DEPARTURES*/
-    public static final int   SERVERS_PACKING = 37;              /* number of servers        20-30-40      */
+    public static final int    SERVERS_PICKING = 28;
+    public static final int   SERVERS_PACKING = 37;
     public static final int    SERVERS_QUALITY = 44;
     public static final int    SERVERS_SORTING_FRAGILE_ORDERS = 30;
     public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS = 30;
+
+    public static final int    SERVERS_PICKING2 = 28;
+    public static final int   SERVERS_PACKING2 = 37;
+    public static final int    SERVERS_QUALITY2 = 44;
+    public static final int    SERVERS_SORTING_FRAGILE_ORDERS2 = 30;
+    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS2 = 30;
+    public static final int    SERVERS_PICKING3 = 28;
+    public static final int   SERVERS_PACKING3 = 37;
+    public static final int    SERVERS_QUALITY3 = 44;
+    public static final int    SERVERS_SORTING_FRAGILE_ORDERS3 = 30;
+    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS3 = 30;
 
     //events
     public static final int EVENT_ARRIVAL_PICKING = 0;
@@ -45,7 +57,7 @@ public class SimulatorParameters {
     public static final double SERVICE_TIME_SORTING_NOT_FRAGILE_ORDERS = 50;
     public static final double STD_SERVICE_TIME_PICKING = 3.0;
     public static final double STD_SERVICE_TIME_PACKING = 5.0;
-    public static final double STD_SERVICE_TIME_QUALITY = 50.0;
+    public static final double STD_SERVICE_TIME_QUALITY = 30.0;
     public static final double STD_SERVICE_SORTING_FRAGILE_ORDERS= 10.7;
     public static final double STD_SERVICE_SORTING_NOT_FRAGILE_ORDERS = 10.1;
     public static final double BERNOULLI_PROB_SUCCESS= 1-  (1.0/ (double) (SERVERS_PICKING+ SERVERS_PACKING));

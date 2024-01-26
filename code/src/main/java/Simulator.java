@@ -207,7 +207,7 @@ public class Simulator {
         r.putSeed(123456789);
         //inizializzazione array eventi e sum
         t.current    = START;
-        event[0].t   = getArrival(r,  1+k); //first arrival to the server node
+        event[0].t   = getArrival(r,  1+k,flag,t.current); //first arrival to the server node
         event[0].x   = 1;
         numberJobsPickingCenter++;
 
@@ -265,7 +265,7 @@ public class Simulator {
             batchJob++;
             if (e == EVENT_ARRIVAL_PICKING) { //arrivo al picking center
                 numberJobsPickingCenter++;
-                event[0].t = getArrival(r, 1+rep);
+                event[0].t = getArrival(r, 1+rep,flag, t.current);
                 arrivalsCounter[0] += (sarrival - t.current);
 
                 if (event[0].t > stop)
@@ -592,7 +592,6 @@ public class Simulator {
                 }
 
                 if (batchJob == batchSize - 1) {
-
                     goBackProbRecord[batchNumber] = goBackProb / (double) batchSize;
 
                     for (int j = 0; j < 5; j++) {
@@ -845,8 +844,17 @@ public class Simulator {
 
     } //end main
 
-    private void adjustArea() {
+    public static void fasciaOrariaSwitch(double currentTime){
+
+        if(0.0 <= currentTime && currentTime < 28800.0){
+
+        } else if (28800.0 <= currentTime && currentTime < 57600.0) {
+
+        } else {
+
+        }
     }
+
 
     private double getServiceMultiServer(Rngs r, int streamIndex, int center) {
         r.selectStream(streamIndex);
@@ -880,16 +888,20 @@ public class Simulator {
         return TruncatedNormalDistribution.of(m,std,LOWER_BOUND_NORMAL,60*m).inverseCumulativeProbability(r.random());
     }
 
-    private double getArrival(Rngs r, int streamIndex) {
+    private double getArrival(Rngs r, int streamIndex, int flag, double clockTime) {
         /* --------------------------------------------------------------
          * generate the next arrival time with idfPoisson
          * --------------------------------------------------------------
          */
         r.selectStream(0 + streamIndex);
-
+        double arrival = 0.0;
         Rvms rvms = new Rvms();
-        //int index = utils.fasciaOrariaSwitch(listaFasciaOraria,);
-        sarrival += rvms.idfPoisson(ARRIVAL, r.random());
+        if(flag !=0) {
+            arrival = fasciaOrariaSwitch(clockTime);
+        }
+        else
+            arrival = ARRIVAL;
+        sarrival += rvms.idfPoisson(arrival, r.random());
         return (sarrival);
     }
 

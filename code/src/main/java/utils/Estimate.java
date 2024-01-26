@@ -56,6 +56,7 @@ public class Estimate{
 	    t = rvms.idfStudent(n - 1, u);            /* critical value of t */
 	    w = t * stdev / Math.sqrt(n - 1);         /* interval half width */
 
+		System.out.println();
 	    System.out.print("\nbased upon " + n + " data points");
 	    System.out.print(" and with " + (int) (100.0 * LOC + 0.5) + 
 		"% confidence\n");
@@ -66,8 +67,47 @@ public class Estimate{
 	    System.out.print("ERROR - insufficient data\n");
 	}
     }
-	public static void estimateOnFile(String csvName)
+	public void estimateFiniteHorizon(double[] array, String name)
 	{
+		long   n    = 0;                     /* counts data points */
+		double sum  = 0.0;
+		double mean = 0.0;
+		double data;
+		double stdev;
+		double u, t, w;
+		double diff;
+
+		Rvms rvms = new Rvms();
+
+		for (int i = 0; i < array.length; i++) { /* use Welford's one-pass method */
+			data = array[i];
+			n++; /* and standard deviation */
+			diff = data - mean;
+			sum += diff * diff * (n - 1.0) / n;
+			mean += diff / n;
+		}
+
+		stdev  = Math.sqrt(sum / n);
+
+		DecimalFormat df = new DecimalFormat("###0.00000");
+
+		if (n > 1) {
+			u = 1.0 - 0.5 * (1.0 - LOC);              /* interval parameter  */
+			t = rvms.idfStudent(n - 1, u);            /* critical value of t */
+			w = t * stdev / Math.sqrt(n - 1);         /* interval half width */
+
+			System.out.println(name);
+			System.out.print("\nbased upon " + n + " data points");
+			System.out.print(" and with " + (int) (100.0 * LOC + 0.5) +
+					"% confidence\n");
+			System.out.print("the expected value is in the interval ");
+			System.out.print( df.format(mean) + " +/- " + df.format(w) + "\n");
+		}
+		else{
+			System.out.print("ERROR - insufficient data\n");
+		}
+	}
+	public static void estimateOnFile(String[] csvName, int index) throws FileNotFoundException {
 		long   n    = 0;                     /* counts data points */
 		double sum  = 0.0;
 		double mean = 0.0;
@@ -80,7 +120,7 @@ public class Estimate{
 
 		Rvms rvms = new Rvms();
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader br = new BufferedReader(new FileReader(csvName[index]));
 		try{
 			line = br.readLine();
 
