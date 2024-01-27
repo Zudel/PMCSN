@@ -44,10 +44,10 @@ public class Simulator {
     private  double[] utilizationCounter;
     private  double[] numberResponseTimeCounter;
     private  double[] numberWaitingTimeCounter;
-
     private  int batchSize;
     private  int k;
     private static double service;
+    private static int[][] fasciaServer;
     private  int flag;
     private  double pickingResponseTime; //contatori per la media di un batch
     private  double packingResponseTime;
@@ -72,6 +72,8 @@ public class Simulator {
     private  int rep;
     private Rngs r = new Rngs();
     private  static String[] csvNames;
+    private static int  fasciaIndex;
+    private int z=0;
 
 
     //static List<FasciaOraria> listaFasciaOraria = utils.LeggiCSV("C:\\Users\\Roberto\\Documents\\GitHub\\PMCSN\\code\\src\\main\\resources\\distribuzioneOrdiniGiornalieri.csv");
@@ -128,6 +130,8 @@ public class Simulator {
         totalResponseTime = new double[k];
         goBackProbRecord = new double[k];
         domandaMedia = new double[5][k];
+        fasciaServer = new int[3][5];
+        fasciaIndex =0;
         if(SERVERS_PICKING + SERVERS_PACKING <= 20)
             pSuccess = 0.950;
         else
@@ -155,7 +159,7 @@ public class Simulator {
         int    sQualityCenter;                      /* quality center index                       */
         int    sSortingFragileOrders;
         int    sSortingNotFragileOrders;
-
+        long iteration =0;
         double areaPickingCenter   = 0.0;           /* time integrated number in the node */
         double areaPackingCenter   = 0.0;           /* time integrated number in the node */
         double areaQualityCenter   = 0.0;           /* time integrated number in the node */
@@ -218,16 +222,18 @@ public class Simulator {
             sum[i].served  = 0;
         }
 
-        if(flag == 0)
-            if(event[0].x != 0)
+        if(flag == 0) {
+            if (event[0].x != 0)
                 cond = true;
             else
                 cond = false;
-        else
-        if(event[0].x != 0 || (numberJobsPickingCenter + numberJobsPackingCenter + numberJobsQualityCenter + numberJobsSortingFragileCenter + numberJobsSortingNotFragileCenter) > 0)
-            cond = true;
-        else
-            cond = false;
+        }
+        else {
+            if (event[0].x != 0 || (numberJobsPickingCenter + numberJobsPackingCenter + numberJobsQualityCenter + numberJobsSortingFragileCenter + numberJobsSortingNotFragileCenter) > 0)
+                cond = true;
+            else
+                cond = false;
+        }
         // INIZIO SIMULAZIONE //
         while (cond) {
             e         = nextEvent(event);
@@ -259,7 +265,7 @@ public class Simulator {
                  areaQueueNotFragilePrimeOrders += (t.next - t.current) * (numberPrimeJobsSortingNotFragileCenter );
 
             t.current = t.next;                                                 //advance the simulation clock
-
+            iteration++;
             if(t.current <= STOP_BATCH)
                 batchNumber = (int) t.current / batchSize;
             batchJob++;
@@ -601,7 +607,7 @@ public class Simulator {
                         utilizationRecords[j][batchNumber] = utilizationCounter[j] / batchSize;
                         arrivals[j][batchNumber] = arrivalsCounter[j] / batchSize;
                         //globali
-                        domandaMedia[j][batchNumber] = (arrivalsCounter[j] / batchSize) * ARRIVAL * serviceTimeCenter[j];
+                        domandaMedia[j][batchNumber] = (arrivalsCounter[j] / batchSize) * ARRIVAL_L * serviceTimeCenter[j];
                         totalResponseTime[batchNumber] += responseTimerecords[j][batchNumber]; //calcolo i
 
 
@@ -625,21 +631,26 @@ public class Simulator {
                     batchJob = 0; //passo al prossimo batch e salvo le statistiche nel batch associato
                 }
             }
-            if(flag == 0)
-               if(event[0].x != 0)
-                   cond = true;
-                else
-                    cond = false;
-            else
-                if(event[0].x != 0 || (numberJobsPickingCenter + numberJobsPackingCenter + numberJobsQualityCenter + numberJobsSortingFragileCenter + numberJobsSortingNotFragileCenter) > 0)
+            if(flag == 0) {
+                if (event[0].x != 0)
                     cond = true;
                 else
                     cond = false;
+            }
+            else {
+                if (event[0].x != 0 || (numberJobsPickingCenter + numberJobsPackingCenter + numberJobsQualityCenter + numberJobsSortingFragileCenter + numberJobsSortingNotFragileCenter) > 0)
+                    cond = true;
+                else
+                    cond = false;
+                //raccolgo i dati
+                if(iteration % 2 ==0){
+                    totalResponseTime[batchNumber] = areaPackingCenter/ indexPackingCenter + areaPickingCenter / indexPickingCenter + areaQualityCenter / indexQualityCenter + areaSortingFragileOrders / indexSortingFragileOrders;
+                }
+            }
 
         } //end while
-        DecimalFormat f = new DecimalFormat("###0.0000000");
 
-        System.out.println("----------------------------------------------------");
+        //System.out.println("----------------------------------------------------");
         if(flag == 0) {
             for (int j = 0; j < 5; j++) {
                 System.out.println("\n");
@@ -684,7 +695,6 @@ public class Simulator {
                 graficoGoBackProb.setLocationRelativeTo(null);
                 graficoGoBackProb.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 graficoGoBackProb.setVisible(true);
-
             });
         }
         //stampo i risultati
@@ -704,8 +714,25 @@ public class Simulator {
         System.out.println("partenze di tipo NON PRIME nel centro di smistamento ordini NON fragili: " + indexSortingNotFragileNotPrimeOrders);
         System.out.println("numeri di job non passati: " +numberFeedbackIsTrue);
         System.out.println("PERCENTUALE DI JOB NON PASSATI: " +f.format((double ) 100*(numberFeedbackIsTrue/indexQualityCenter)));*/
-        System.out.println("----------------------------------------------------");
+        //System.out.println("----------------------------------------------------");
         if(flag !=0){
+            /*SwingUtilities.invokeLater(() -> {
+                plotter graficoRespTimeTot = new plotter("sistema","tempo di risposta totale", totalResponseTime, this.k, this.batchSize);
+                graficoRespTimeTot.setSize(800, 600);
+                graficoRespTimeTot.setLocationRelativeTo(null);
+                //graficoRespTimeTot.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                graficoRespTimeTot.setVisible(true);
+            });
+
+            SwingUtilities.invokeLater(() -> {
+                plotter graficoGoBackProb = new plotter("", "probabilità ordine difettoso", goBackProbRecord, this.k, this.batchSize);
+                graficoGoBackProb.setSize(800, 600);
+                graficoGoBackProb.setLocationRelativeTo(null);
+                graficoGoBackProb.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                graficoGoBackProb.setVisible(true);
+            });
+            */
+            CSVLibrary.writeToCsv(totalResponseTime, "totalResponseTime"+z+".csv");
             double[] pickingStatistics = new double[3];
             double[] packingStatistics = new double[3];
             double[] qualityStatistics = new double[3];
@@ -716,8 +743,8 @@ public class Simulator {
             qualityResponseTime = areaQualityCenter / indexQualityCenter;
             fragileSortingResponseTime = areaSortingFragileOrders / indexSortingFragileOrders;
             notFragileSortingResponseTime = areaSortingNotFragileOrders / indexSortingNotFragileOrders;
-            totalResponseTime[0] = pickingResponseTime + packingResponseTime + qualityResponseTime + fragileSortingResponseTime ; //con fragile
-            totalResponseTime[1] = pickingResponseTime + packingResponseTime + qualityResponseTime+ notFragileSortingResponseTime;//senza fragile
+            //totalResponseTime[0] = pickingResponseTime + packingResponseTime + qualityResponseTime + fragileSortingResponseTime ; //con fragile
+            //totalResponseTime[1] = pickingResponseTime + packingResponseTime + qualityResponseTime+ notFragileSortingResponseTime;//senza fragile
             for (int s = EVENT_ARRIVAL_SORTING_NOT_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
                 utilizationCounter[4] += sum[s].service;
             utilizationCounter[4] = utilizationCounter[4] / SERVERS_SORTING_NOT_FRAGILE_ORDERS;
@@ -751,7 +778,7 @@ public class Simulator {
             resistentStatistics[2] = utilizationCounter[4];
 
             //nel nodo
-        System.out.println("TEMPI E QUANTITA NEL NODO");
+        /* System.out.println("TEMPI E QUANTITA NEL NODO");
         System.out.println("\nfor " + indexPickingCenter + " jobs the service node PICKING's statistics are:\n");
         //System.out.println("  avg interarrivals .. =   " + f.format(event[0].t / indexPickingCenter)); //E(interrarrivo)
         System.out.println("  avg wait (E(TS)) ... =   " + f.format(pickingResponseTime));  //E(Ts)
@@ -775,11 +802,11 @@ public class Simulator {
 
         System.out.println("\nfor " + indexSortingNotFragileOrders + " jobs the service node SORTING RESISTENT ORDERS's statistics are:\n");
         System.out.println("  avg wait ........... =   " + f.format(notFragileSortingResponseTime));  //E(Ts)
-        System.out.println("  avg # in node ...... =   " + f.format(areaSortingNotFragileOrders / t.current)); //E(Ns)*/
+        System.out.println("  avg # in node ...... =   " + f.format(areaSortingNotFragileOrders / t.current)); //E(Ns)
         System.out.println("  utilization..... =   " + f.format(utilizationCounter[4]));
 
         System.out.println("\nTEMPI E QUANTITA NEL SISTEMA");
-        System.out.println("  avg wait ........... =   " + f.format(totalResponseTime[0]));  //E(Ts)
+        System.out.println("  avg wait ........... =   " + f.format(totalResponseTime[0]));*/  //E(Ts)
 
             for (int s = EVENT_ARRIVAL_PICKING + 1; s <= EVENT_DEPARTURE_PICKING; s++) //calcolo l'utilizzazione del centro facendo la media
                 areaPickingCenter -= sum[s].service;
@@ -791,7 +818,6 @@ public class Simulator {
                 areaSortingFragileOrders -= sum[s].service;
             for (int s = EVENT_ARRIVAL_SORTING_NOT_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
                 areaSortingNotFragileOrders -= sum[s].service;
-            //adjustArea();
             pickingStatistics[1] = areaPickingCenter / indexPickingCenter;
             packingStatistics[1] = areaPackingCenter / indexPackingCenter;
             qualityStatistics[1] = areaQualityCenter / indexQualityCenter;
@@ -805,7 +831,7 @@ public class Simulator {
             CSVLibrary.writeToCsv(resistentStatistics,csvNames[4]);
 
             //nella coda
-            System.out.println("\nTEMPI E QUANTITA NELLA CODA");
+            /*System.out.println("\nTEMPI E QUANTITA NELLA CODA");
             System.out.println("PICKING CENTER");
             System.out.println("  E(Tq) .......... =   " + f.format(areaPickingCenter / indexPickingCenter));
             System.out.println("  E(Nq) ..... =   " + f.format(areaPickingCenter / t.current));
@@ -826,12 +852,12 @@ public class Simulator {
             System.out.println("  E(Nq) ..... =   " + f.format(areaSortingFragilePrimeOrders / t.current));
             System.out.println("Not Prime queue");
             System.out.println("  E(Tq) .......... =   " + f.format(areaSortingFragileNotPrimeOrders / indexSortingFragileNotPrimeOrders));
-            System.out.println("  E(Nq) ..... =   " + f.format(areaSortingFragileNotPrimeOrders / t.current));*/
+            System.out.println("  E(Nq) ..... =   " + f.format(areaSortingFragileNotPrimeOrders / t.current));
 
             System.out.println("\nRESISTENT ORDERS CENTER");
             System.out.println("  E(Tq) .......... =   " + f.format(areaSortingNotFragileOrders / indexSortingNotFragileOrders));
             System.out.println("  E(Nq) ..... =   " + f.format(areaSortingNotFragileOrders / t.current));
-            /*System.out.println("Prime queue");
+            System.out.println("Prime queue");
             System.out.println("  E(Tq) .......... =   " + f.format(areaSortingNotFragilePrimeOrders / indexSortingNotFragilePrimeOrders));
             System.out.println("  E(Nq) ..... =   " + f.format(areaSortingNotFragilePrimeOrders / t.current));
             System.out.println("Not Prime queue");
@@ -844,15 +870,19 @@ public class Simulator {
 
     } //end main
 
-    public static void fasciaOrariaSwitch(double currentTime){
+    public static double fasciaOrariaSwitch(double currentTime, int fascia){
+        double arrival;
 
         if(0.0 <= currentTime && currentTime < 28800.0){
-
+            arrival = ARRIVAL_M;
+            fascia =0;
         } else if (28800.0 <= currentTime && currentTime < 57600.0) {
-
+            arrival = ARRIVAL_H;
+            fascia = 1;
         } else {
-
+            arrival = ARRIVAL_L;
         }
+        return arrival;
     }
 
 
@@ -894,13 +924,13 @@ public class Simulator {
          * --------------------------------------------------------------
          */
         r.selectStream(0 + streamIndex);
-        double arrival = 0.0;
+        double arrival;
         Rvms rvms = new Rvms();
         if(flag !=0) {
-            arrival = fasciaOrariaSwitch(clockTime);
+            arrival = fasciaOrariaSwitch(clockTime, fasciaIndex);
         }
         else
-            arrival = ARRIVAL;
+            arrival = ARRIVAL_L;
         sarrival += rvms.idfPoisson(arrival, r.random());
         return (sarrival);
     }

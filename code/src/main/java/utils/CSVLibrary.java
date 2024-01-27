@@ -14,7 +14,7 @@ public class CSVLibrary {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvName,true))) {
             // Scrivi i dati dell'array nel file CSV
             for (double value : data) {
-                writer.write(String.valueOf(value));
+                writer.write(String.valueOf(value)); //rciorda che se sul csv vuoi valori interi fai il cast!
                 writer.write(",");
             }
             writer.newLine();

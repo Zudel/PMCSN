@@ -1,21 +1,39 @@
 package model;
 
 public class SimulatorParameters {
-    public static final double ARRIVAL   = 2.0;      //(ARRIVAL = 2.0, 0.66 lambda = 0.5, 1.5)
+    public static final double ARRIVAL_L   = 2.0;      //(ARRIVAL = 2.0, 0.66 lambda = 0.5, 1.5)
+    public static final double ARRIVAL_H   = 0.6666;
+    public static final double ARRIVAL_M   = 1.0;
     public static final double START   = 0.0;            /* initial (open the door)        */
     public static final double STOP_BATCH    = 131072; /* close the door infinite horizon*/
-    public static final double STOP    = 86400; /* close the door finite horizone*/
+    public static final double STOP    = 86400; /* close the door finite horizone 86400*/
     public static final int REPLICATION = 128;
     //probabilities
     public static final double QUALITY_CENTER_PROB = 0.33;
     public static final double ORDER_PRIME = 0.62;
     public static final double SORTING_FRAGILE_CENTER = 0.5;
     //SERVERS
-    public static final int    SERVERS_PICKING = 28;
-    public static final int   SERVERS_PACKING = 37;
-    public static final int    SERVERS_QUALITY = 44;
-    public static final int    SERVERS_SORTING_FRAGILE_ORDERS = 30;
-    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS = 30;
+    public static final int    SERVERS_PICKING = 64;
+    public static final int   SERVERS_PACKING = 76;
+    public static final int    SERVERS_QUALITY = 118;
+    public static final int    SERVERS_SORTING_FRAGILE_ORDERS = 64;
+    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS = 64;
+    /**
+     * M(48,60,85,48,49);}
+     * H(74,86,112,64,64)
+     L(44,47,44,30,30).}*/
+
+    /**
+     * provate nel finite horizon
+     * H
+     * CONFIGURAZIONE (64,76,118,64,64)
+     * CONFIGURAZIONE (,,,,)
+     * CONFIGURAZIONE (,,,,)
+     * CONFIGURAZIONE (,,,,)
+     * CONFIGURAZIONE (,,,,)
+     * CONFIGURAZIONE (,,,,)
+     * CONFIGURAZIONE (,,,,)
+     * */
 
     public static final int    SERVERS_PICKING2 = 28;
     public static final int   SERVERS_PACKING2 = 37;
@@ -60,7 +78,7 @@ public class SimulatorParameters {
     public static final double STD_SERVICE_TIME_QUALITY = 30.0;
     public static final double STD_SERVICE_SORTING_FRAGILE_ORDERS= 10.7;
     public static final double STD_SERVICE_SORTING_NOT_FRAGILE_ORDERS = 10.1;
-    public static final double BERNOULLI_PROB_SUCCESS= 1-  (1.0/ (double) (SERVERS_PICKING+ SERVERS_PACKING));
+    public static final double BERNOULLI_PROB_SUCCESS= 1 - (1.0/ (double) (SERVERS_PICKING+ SERVERS_PACKING));
     public static final int LOWER_BOUND_NORMAL = 0;
 
 }
