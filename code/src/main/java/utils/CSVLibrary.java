@@ -22,11 +22,21 @@ public class CSVLibrary {
             e.printStackTrace();
         }
     }
+    public static void writeToCsvProb(double data, String csvName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvName, true))) {
+            writer.write(String.valueOf(data)); // Ricorda che se sul CSV vuoi valori interi fai il cast!
+            writer.write(",");
+            writer.newLine();
+            // Aggiungi una nuova linea dopo ogni riga di dati
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public static double[] readCSVFile(int index, String csvName) {
         CSVReader reader = null;
         double[] arrayValues = new double[128];
         try {
-            reader = new CSVReader(new FileReader(csvName));
+            reader = new CSVReader(new FileReader(csvName),',');
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

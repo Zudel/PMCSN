@@ -57,13 +57,6 @@ public class utils {
             lista.add(new FasciaOraria(fasceOrari.get(i), frequenzaOraria,  proporzioni.get(i),  i  ,0+ 3600*i, 3600+3600*i));//3600 secondi in un ora
         }
 
-        //stampa a video i risultati
-       /* for (int i = 0; i < fasceOrari.size(); i++) {
-            System.out.println("Fascia oraria: " + lista.get(i).getFasciaOraria() + ", Frequenza: " + lista.get(i).getFrequenza() +", Mean Poisson: " + lista.get(i).getMeanPoisson());
-
-        System.out.println("Somma delle frequenze: " + sommaFrequenze
-            + ", Somma delle proporzioni: " + sommaProporzioni);
-    }*/
 
 
     return lista;

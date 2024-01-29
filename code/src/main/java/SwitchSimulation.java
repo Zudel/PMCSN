@@ -6,15 +6,10 @@ import java.io.IOException;
 
 import static model.SimulatorParameters.REPLICATION;
 
-public class SteadyStateSimulation {
+public class SwitchSimulation {
     private static int batchSize=1024;
     private static int k=128;
     private static int flag=1;
-
-    /**
-     * (48,60,85,48,49);}
-     * (74,86,112,64,64)
-      (44,47,44,30,30).}*/
 
     /**
      * if the flag variable is set to 0, then we are under steady state simulation; otherwise transient simulation
@@ -26,7 +21,7 @@ public class SteadyStateSimulation {
         if(flag != 0) {
             r.plantSeeds(12986789);
             String[] csvNames = new String[]{"picking.csv", "packing.csv", "quality.csv", "fragile.csv", "resistent.csv"};
-            for (int j = 0; j < 128; j++) {
+            for (int j = 0; j < REPLICATION; j++) {
                 sim = new Simulator(batchSize, k, flag, j, r, csvNames);
                 sim.main();
             }
@@ -34,13 +29,15 @@ public class SteadyStateSimulation {
             for (int j = 0; j < 5; j++) {
                 for (int i = 0; i < 2; i++)
                     estimate.estimateFiniteHorizon(CSVLibrary.readCSVFile(i, csvNames[j]), csvNames[j]);
+
             }
+            for (int i = 0; i < 3; i++) //glob
+                estimate.estimateFiniteHorizon(CSVLibrary.readCSVFile(i, "globalStatistics.csv"),"globalStatistics.csv" );
         }
         else {
             /**analisi stazionaria utilizzando il metodo dei batch means*/
             sim = new Simulator(batchSize, k, flag);
             sim.main();
         }
-
     }
 }

@@ -13,38 +13,16 @@ public class SimulatorParameters {
     public static final double ORDER_PRIME = 0.62;
     public static final double SORTING_FRAGILE_CENTER = 0.5;
     //SERVERS
-    public static final int    SERVERS_PICKING = 64;
-    public static final int   SERVERS_PACKING = 76;
-    public static final int    SERVERS_QUALITY = 118;
-    public static final int    SERVERS_SORTING_FRAGILE_ORDERS = 64;
-    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS = 64;
+    public static final int    SERVERS_PICKING = 37;
+    public static final int   SERVERS_PACKING = 45;
+    public static final int    SERVERS_QUALITY = 95;
+    public static final int    SERVERS_SORTING_FRAGILE_ORDERS = 56;
+    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS = 56;
     /**
      * M(48,60,85,48,49);}
      * H(74,86,112,64,64)
      L(44,47,44,30,30).}*/
 
-    /**
-     * provate nel finite horizon
-     * H
-     * CONFIGURAZIONE (64,76,118,64,64)
-     * CONFIGURAZIONE (,,,,)
-     * CONFIGURAZIONE (,,,,)
-     * CONFIGURAZIONE (,,,,)
-     * CONFIGURAZIONE (,,,,)
-     * CONFIGURAZIONE (,,,,)
-     * CONFIGURAZIONE (,,,,)
-     * */
-
-    public static final int    SERVERS_PICKING2 = 28;
-    public static final int   SERVERS_PACKING2 = 37;
-    public static final int    SERVERS_QUALITY2 = 44;
-    public static final int    SERVERS_SORTING_FRAGILE_ORDERS2 = 30;
-    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS2 = 30;
-    public static final int    SERVERS_PICKING3 = 28;
-    public static final int   SERVERS_PACKING3 = 37;
-    public static final int    SERVERS_QUALITY3 = 44;
-    public static final int    SERVERS_SORTING_FRAGILE_ORDERS3 = 30;
-    public static final int    SERVERS_SORTING_NOT_FRAGILE_ORDERS3 = 30;
 
     //events
     public static final int EVENT_ARRIVAL_PICKING = 0;

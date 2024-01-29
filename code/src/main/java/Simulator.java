@@ -6,7 +6,6 @@ import utils.plotter;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import org.apache.commons.statistics.distribution.TruncatedNormalDistribution;
 import static model.SimulatorParameters.*;
 class Event {                     /* the next-event list    */
@@ -74,6 +73,7 @@ public class Simulator {
     private  static String[] csvNames;
     private static int  fasciaIndex;
     private int z=0;
+    private double pickPackNumber =0.0;
 
 
     //static List<FasciaOraria> listaFasciaOraria = utils.LeggiCSV("C:\\Users\\Roberto\\Documents\\GitHub\\PMCSN\\code\\src\\main\\resources\\distribuzioneOrdiniGiornalieri.csv");
@@ -98,11 +98,7 @@ public class Simulator {
         totalResponseTime = new double[k];
         goBackProbRecord = new double[k];
         domandaMedia = new double[5][k];
-        if(SERVERS_PICKING + SERVERS_PACKING <= 20)
-            pSuccess = 0.950;
-        else
-            pSuccess = BERNOULLI_PROB_SUCCESS;
-        stop = STOP_BATCH;
+        pSuccess = goBackProb;
 
     }
 
@@ -132,10 +128,8 @@ public class Simulator {
         domandaMedia = new double[5][k];
         fasciaServer = new int[3][5];
         fasciaIndex =0;
-        if(SERVERS_PICKING + SERVERS_PACKING <= 20)
-            pSuccess = 0.950;
-        else
-            pSuccess = BERNOULLI_PROB_SUCCESS;
+
+        pSuccess = goBackProb;
         stop = STOP;
     }
 
@@ -248,6 +242,7 @@ public class Simulator {
             areaSortingFragileNotPrimeOrders += (t.next - t.current) * numberNotPrimeJobsSortingFragileCenter;
             areaSortingNotFragilePrimeOrders += (t.next - t.current) * numberPrimeJobsSortingNotFragileCenter;
             areaSortingNotFragileNotPrimeOrders += (t.next - t.current) * numberNotPrimeJobsSortingNotFragileCenter;
+            pickPackNumber = (areaPackingCenter/indexPackingCenter + areaPickingCenter/indexPickingCenter) ;
 
             if(numberJobsPickingCenter > SERVERS_PICKING)
                 areaQueuePickingCenter += (t.next - t.current) * (numberJobsPickingCenter - SERVERS_PICKING);
@@ -414,7 +409,7 @@ public class Simulator {
                     event[sQualityCenter].x = 0;
                 }
 
-                if(idfBernoulli(BERNOULLI_PROB_SUCCESS, r.random()) == 0) { //probabilità di andare al picking center (TEST FALLITO)
+                if(idfBernoulli(1-feedbackProb(pickPackNumber), r.random()) == 0) { //probabilità di andare al picking center (TEST FALLITO)
                     numberFeedbackIsTrue++; //conto il numero di job che non passano il test
                     event[EVENT_ARRIVAL_PICKING].x = 1;
                     event[EVENT_ARRIVAL_PICKING].t = event[sQualityCenter].t;
@@ -569,7 +564,8 @@ public class Simulator {
                         utilizationCounter[2] += sum[s].service;
                     utilizationCounter[2] = utilizationCounter[2] / SERVERS_QUALITY;
                     utilizationCounter[2] = (utilizationCounter[2]) / t.current;
-                    goBackProb += ((double) numberFeedbackIsTrue / (double) indexQualityCenter);
+                    //goBackProb += (areaPackingCenter + areaPickingCenter) / t.current  ;
+                    goBackProb += (double) numberFeedbackIsTrue / (double) indexQualityCenter;
 
                 }
                 if (indexSortingFragileOrders != 0) {
@@ -608,8 +604,7 @@ public class Simulator {
                         arrivals[j][batchNumber] = arrivalsCounter[j] / batchSize;
                         //globali
                         domandaMedia[j][batchNumber] = (arrivalsCounter[j] / batchSize) * ARRIVAL_L * serviceTimeCenter[j];
-                        totalResponseTime[batchNumber] += responseTimerecords[j][batchNumber]; //calcolo i
-
+                        totalResponseTime[batchNumber] += responseTimerecords[j][batchNumber];
 
                     }
                     for (int j = 0; j < 7; j++) {
@@ -642,10 +637,6 @@ public class Simulator {
                     cond = true;
                 else
                     cond = false;
-                //raccolgo i dati
-                if(iteration % 2 ==0){
-                    totalResponseTime[batchNumber] = areaPackingCenter/ indexPackingCenter + areaPickingCenter / indexPickingCenter + areaQualityCenter / indexQualityCenter + areaSortingFragileOrders / indexSortingFragileOrders;
-                }
             }
 
         } //end while
@@ -738,13 +729,14 @@ public class Simulator {
             double[] qualityStatistics = new double[3];
             double[] fragileStatistics = new double[3];
             double[] resistentStatistics = new double[3];
+            double[] globalStatistics = new double[3];
             pickingResponseTime = areaPickingCenter / indexPickingCenter;
             packingResponseTime = areaPackingCenter / indexPackingCenter;
             qualityResponseTime = areaQualityCenter / indexQualityCenter;
             fragileSortingResponseTime = areaSortingFragileOrders / indexSortingFragileOrders;
             notFragileSortingResponseTime = areaSortingNotFragileOrders / indexSortingNotFragileOrders;
-            //totalResponseTime[0] = pickingResponseTime + packingResponseTime + qualityResponseTime + fragileSortingResponseTime ; //con fragile
-            //totalResponseTime[1] = pickingResponseTime + packingResponseTime + qualityResponseTime+ notFragileSortingResponseTime;//senza fragile
+            totalResponseTime[0] = pickingResponseTime + packingResponseTime + qualityResponseTime + fragileSortingResponseTime ; //con fragile
+            totalResponseTime[1] = pickingResponseTime + packingResponseTime + qualityResponseTime+ notFragileSortingResponseTime;//senza fragile
             for (int s = EVENT_ARRIVAL_SORTING_NOT_FRAGILE_NOT_PRIME_ORDERS + 1; s <= EVENT_DEPARTURE_SORTING_NOT_FRAGILE_ORDERS; s++) //calcolo l'utilizzazione del centro facendo la media
                 utilizationCounter[4] += sum[s].service;
             utilizationCounter[4] = utilizationCounter[4] / SERVERS_SORTING_NOT_FRAGILE_ORDERS;
@@ -829,6 +821,11 @@ public class Simulator {
             CSVLibrary.writeToCsv(qualityStatistics,csvNames[2]);
             CSVLibrary.writeToCsv(fragileStatistics,csvNames[3]);
             CSVLibrary.writeToCsv(resistentStatistics,csvNames[4]);
+            globalStatistics[0] = pickingStatistics[0]+packingStatistics[0]+qualityStatistics[0]+fragileStatistics[0];
+            globalStatistics[1] = pickingStatistics[0]+packingStatistics[0]+qualityStatistics[0]+resistentStatistics[0];
+            globalStatistics[2] = (double) numberFeedbackIsTrue / (double) indexQualityCenter;
+            CSVLibrary.writeToCsv(globalStatistics,"globalStatistics.csv");
+
 
             //nella coda
             /*System.out.println("\nTEMPI E QUANTITA NELLA CODA");
@@ -869,6 +866,10 @@ public class Simulator {
         }
 
     } //end main
+
+    private double feedbackProb(double pickPackNumber) {
+        return (100*pickPackNumber*pickPackNumber - pickPackNumber)/(pickPackNumber*pickPackNumber + 1000000*pickPackNumber+800);
+    }
 
     public static double fasciaOrariaSwitch(double currentTime, int fascia){
         double arrival;

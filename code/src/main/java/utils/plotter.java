@@ -92,14 +92,4 @@ public class plotter extends JFrame {
             e.printStackTrace();
         }
     }
-
-    /*public  void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            plotter example = new plotter("Grafico", );
-            example.setSize(800, 600);
-            example.setLocationRelativeTo(null);
-            example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            example.setVisible(true);
-        });
-    }*/
 }
